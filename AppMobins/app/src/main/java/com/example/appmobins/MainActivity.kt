@@ -1,9 +1,11 @@
 package com.example.appmobins
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,27 +24,36 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_layout)
 
-        val dataList= mutableListOf<String>("line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3")
+        val dataList= mutableListOf<String>("line 1")//, "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3")
 //        var dataList= mutableListOf<String>()
-        dataList.add(fib(1,1,5,true))
+//        dataList.add(fib(1,1,5,true))
         var dataArray = dataList.toTypedArray()
-
 
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
         recyclerView.adapter = CustomAdapter(dataArray)
 
+        findViewById<Button>(R.id.run_button)
+            .setOnClickListener {
+                Log.d("BUTTONS", "User tapped the Runbutton")
+                dataList.add(fib(1,1,5,true))
+                dataArray = dataList.toTypedArray()
+                recyclerView.adapter = CustomAdapter(dataArray)
+            }
 
-//        setContent {
-//            AppMobinsTheme {
-//                // A surface container using the 'background' color from the theme
-//                Surface(
-//                    modifier = Modifier.fillMaxSize(),
-//                    color = MaterialTheme.colorScheme.background
-//                ) {
-//                    Greeting("Android")
-//                }
-//            }
-//        }
+        findViewById<Button>(R.id.clear_button)
+            .setOnClickListener {
+                dataList.clear()
+                dataArray = dataList.toTypedArray()
+                recyclerView.adapter = CustomAdapter(dataArray)
+            }
+
+        findViewById<Button>(R.id.removeLast_button)
+            .setOnClickListener {
+                dataList.removeLastOrNull()
+                dataArray = dataList.toTypedArray()
+                recyclerView.adapter = CustomAdapter(dataArray)
+            }
+
     }
 }
 
@@ -102,11 +113,3 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
-
-//@Preview(showBackground = true) //quite useless in the context of not using Jetpack Compose
-//@Composable
-//fun GreetingPreview() {
-//    AppMobinsTheme {
-//        Greeting("Android")
-//    }
-//}
