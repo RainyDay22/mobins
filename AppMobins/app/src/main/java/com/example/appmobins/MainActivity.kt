@@ -1,5 +1,6 @@
 package com.example.appmobins
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -38,6 +39,14 @@ class MainActivity : ComponentActivity() {
                 dataList.add(fib(1,1,5,true))
                 dataArray = dataList.toTypedArray()
                 recyclerView.adapter = CustomAdapter(dataArray)
+            }
+
+        findViewById<Button>(R.id.travel_button)
+            .setOnClickListener {
+                val travelIntent = Intent(this@MainActivity, PageActivity::class.java)
+                startActivity(travelIntent)
+                Log.d("NAV", "Tried to nav to other activity")
+
             }
 
         findViewById<Button>(R.id.clear_button)
