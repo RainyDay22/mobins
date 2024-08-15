@@ -1,5 +1,6 @@
 package com.example.appmobins
 
+import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -21,12 +22,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appmobins.ui.theme.AppMobinsTheme
 
+class GlobalVars : Application() {
+    companion object {
+        private var mGlobalVarValue: String? = null
+        fun getGlobalVarValue(): String? {
+            return mGlobalVarValue
+        }
+
+        fun setGlobalVarValue(str: String?) {
+            mGlobalVarValue = str
+        }
+    }
+}
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_layout)
 
-        val dataList= mutableListOf<String>("line 1")//, "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3")
+        GlobalVars.setGlobalVarValue("wow")
+        val gVal = GlobalVars.getGlobalVarValue()
+
+        val dataList= mutableListOf<String>("line 1", gVal!!)//, "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3")
 //        var dataList= mutableListOf<String>()
 //        dataList.add(fib(1,1,5,true))
         var dataArray = dataList.toTypedArray()
@@ -37,7 +54,8 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.run_button)
             .setOnClickListener {
                 Log.d("BUTTONS", "User tapped the Runbutton")
-                dataList.add(fib(1,1,5,true))
+                //dataList.add(fib(1,1,5,true))
+                dataList.add(GlobalVars.getGlobalVarValue()!!)
                 dataArray = dataList.toTypedArray()
                 recyclerView.adapter = CustomAdapter(dataArray)
             }
