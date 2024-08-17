@@ -36,11 +36,17 @@
         android:layout_height="wrap_content"
         android:text="Clear" />
 
+<!--    <Button-->
+<!--        android:id="@+id/removeLast_button"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Remove Last Line" />-->
+
     <Button
-        android:id="@+id/removeLast_button"
+        android:id="@+id/writeFile_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Remove Last Line" />
+        android:text="Write to File" />
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"

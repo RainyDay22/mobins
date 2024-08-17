@@ -1,6 +1,7 @@
 package com.example.appmobins
 
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -9,18 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appmobins.ui.theme.AppMobinsTheme
+import java.io.IOException
 
 class GlobalVars : Application() {
     companion object {
@@ -81,15 +74,58 @@ class MainActivity : AppCompatActivity() {
                 recyclerView.adapter = CustomAdapter(dataArray)
             }
 
-        findViewById<Button>(R.id.removeLast_button)
+//        findViewById<Button>(R.id.removeLast_button)
+//            .setOnClickListener {
+//                dataList.removeLastOrNull()
+//                dataArray = dataList.toTypedArray()
+//                recyclerView.adapter = CustomAdapter(dataArray)
+//            }
+
+        findViewById<Button>(R.id.writeFile_button)
             .setOnClickListener {
-                dataList.removeLastOrNull()
-                dataArray = dataList.toTypedArray()
-                recyclerView.adapter = CustomAdapter(dataArray)
+                writeData("wahoo", "mytestfile.txt") //writing
+
+                //reading
+//                val output = readData("mytestfile.txt")
+//                dataList.add(output)
+//                dataArray = dataList.toTypedArray()
+//                recyclerView.adapter = CustomAdapter(dataArray)
             }
 
     }
+
+    private fun writeData(words:String, filename: String) {
+        val data = words
+        if (data.isBlank()) {
+            Toast.makeText(this, "Input is empty", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        try {
+            openFileOutput(filename, Context.MODE_PRIVATE).use { fos ->
+                fos.write(data.toByteArray())
+            }
+            Toast.makeText(this, "Data written to file", Toast.LENGTH_SHORT).show()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Toast.makeText(this, "Failed to write data", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun readData(filename :String) :String{
+        var text_out:String="did not read yet";
+        try {
+            val content = openFileInput(filename).bufferedReader().use { it.readText() }
+            text_out = content;
+            Toast.makeText(this, "Data read from file", Toast.LENGTH_SHORT).show()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Toast.makeText(this, "Failed to read data", Toast.LENGTH_SHORT).show()
+        }
+        return text_out
+    }
 }
+
 
 class CustomAdapter(val lineList: Array<String>) :
     RecyclerView.Adapter<CustomAdapter.ItemViewHolder>() {
@@ -138,12 +174,4 @@ fun fib(l:Int, b4l:Int, len:Int, rep_last:Boolean):String{
         accum = accum +"${last} "
     }
     return accum
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
 }
