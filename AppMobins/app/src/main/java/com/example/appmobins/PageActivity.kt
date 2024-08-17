@@ -18,6 +18,8 @@ class PageActivity : AppCompatActivity() {
                 finish()
             }
 
+        findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.material_switch)
+            .setChecked(GlobalVars.getSwitchState())
 
         findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.material_switch)
             .setOnCheckedChangeListener { _, isChecked ->
@@ -32,6 +34,7 @@ class PageActivity : AppCompatActivity() {
                 GlobalVars.setGlobalVarValue("changed back!")
                 Log.d("GlobalVars", GlobalVars.getGlobalVarValue()!!)
             }
+                GlobalVars.setSwitchState(isChecked)
             }
 
     }

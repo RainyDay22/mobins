@@ -25,13 +25,19 @@ import com.example.appmobins.ui.theme.AppMobinsTheme
 class GlobalVars : Application() {
     companion object {
         private var mGlobalVarValue: String? = null
+        private var switchState: Boolean = false
         fun getGlobalVarValue(): String? {
             return mGlobalVarValue
         }
 
+        fun getSwitchState(): Boolean{return switchState}
+
         fun setGlobalVarValue(str: String?) {
             mGlobalVarValue = str
         }
+
+        fun setSwitchState(state: Boolean){
+            switchState=state}
     }
 }
 
