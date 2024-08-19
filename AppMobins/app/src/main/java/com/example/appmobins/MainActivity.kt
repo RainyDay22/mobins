@@ -15,6 +15,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import java.io.IOException
 
+//from chaquoconsole
+import com.chaquo.python.PyException
+import com.chaquo.python.Python
+import com.chaquo.python.android.AndroidPlatform
+
 class GlobalVars : Application() {
     companion object {
         private var mGlobalVarValue: String? = null
@@ -42,11 +47,18 @@ class MainActivity : AppCompatActivity() {
         GlobalVars.setGlobalVarValue("wow")
         val gVal = GlobalVars.getGlobalVarValue()
 
+        //simulated output/program to run
         val dataList= mutableListOf<String>("line 1", gVal!!)//, "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3")
-//        var dataList= mutableListOf<String>()
-//        dataList.add(fib(1,1,5,true))
         var dataArray = dataList.toTypedArray()
 
+        //setting up python
+        if (! Python.isStarted()) {
+            Python.start(AndroidPlatform(this))
+        }
+        val py = Python.getInstance()
+        val module = py.getModule("main")
+
+        //scroll init
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
         recyclerView.adapter = CustomAdapter(dataArray)
 
@@ -92,7 +104,19 @@ class MainActivity : AppCompatActivity() {
 //                recyclerView.adapter = CustomAdapter(dataArray)
             }
 
+        findViewById<Button>(R.id.python_button).setOnClickListener { //under test
+            try {
+                val pystr = module.callAttr("main") //function call w arg
+                dataList.add(pystr.toJava(String::class.java)) //uhhh unsure
+                dataArray = dataList.toTypedArray()
+                recyclerView.adapter = CustomAdapter(dataArray)
+            } catch (e: PyException) {
+            Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+        }
     }
+
+
+}
 
     private fun writeData(words:String, filename: String) {
         val data = words
