@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.AppMobins" parent="Theme.MaterialComponents" /> <!-- this is like a purple theme that lets u use chips-->
+    <style name="Theme.AppMobins" parent="Theme.MaterialComponents.Light" /> <!-- this is like a purple theme that lets u use chips-->
 <!--        parent="Theme.AppCompat" /> like dark theme-->
 <!--        parent="android:Theme.Material.Light.NoActionBar" /> original code-->
 </resources>

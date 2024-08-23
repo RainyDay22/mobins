@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/text_view"
@@ -18,17 +18,12 @@
         android:layout_height="wrap_content"
         android:text="Go Back" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:src="@tools:sample/avatars" />
 
-<!--    <com.google.android.material.chip.ChipGroup-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="375dp">-->
+    <!--    <com.google.android.material.chip.ChipGroup-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="375dp">-->
 
-<!--    </com.google.android.material.chip.ChipGroup>-->
+    <!--    </com.google.android.material.chip.ChipGroup>-->
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/material_switch"
@@ -39,11 +34,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <Switch-->
-<!--        android:id="@+id/switch1"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Switch" />--> <!-- allegedly deprecated -->
+    <EditText
+        android:id="@+id/etX"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="8"
+        android:hint="type here"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </LinearLayout>

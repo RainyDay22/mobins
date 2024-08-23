@@ -8,11 +8,6 @@
     android:paddingRight="16dp"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name" />
 
     <Space
         android:layout_width="match_parent"
@@ -63,7 +58,8 @@
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="LinearLayoutManager" />
+            app:layoutManager="LinearLayoutManager"
+            android:scrollbars="vertical" />
 
     </FrameLayout>
     </LinearLayout>
