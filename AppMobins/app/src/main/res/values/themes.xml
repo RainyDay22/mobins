@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.AppMobins" parent="Theme.MaterialComponents.Light" /> <!-- this is like a purple theme that lets u use chips-->
+<!--    <style name="Theme.AppMobins" parent="Theme.Material3.Light" /> &lt;!&ndash; this is like a purple theme that lets u use switches&ndash;&gt;-->
 <!--        parent="Theme.AppCompat" /> like dark theme-->
-<!--        parent="android:Theme.Material.Light.NoActionBar" /> original code-->
+<!--        parent="android:Theme.Material.Light" /> material2 theme-->
+
+    <style name="Theme.AppMobins" parent="Theme.Material3.Light">
+        <item name="colorPrimary">@color/dustyPurple</item>
+            <!-- color of button background  -->
+        <item name="colorPrimaryVariant">@color/gray</item>
+            <!--   color of   ???  -->
+        <item name="colorOnPrimary">@color/white</item>
+            <!--  color of text on button background   -->
+    </style>
+
 </resources>
