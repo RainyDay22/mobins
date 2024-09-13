@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:orientation="vertical" >
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <Space
         android:id="@+id/space"
         android:layout_width="match_parent"
         android:layout_height="40.dp"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="16dp" />
+        tools:layout_editor_absoluteX="16dp"
+        />
 
     <Button
         android:id="@+id/run_button"
@@ -22,14 +21,8 @@
         android:layout_height="wrap_content"
         android:text="Run"
         app:layout_constraintTop_toBottomOf="@id/space"
-        app:layout_constraintLeft_toLeftOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <!--    <Button-->
-<!--        android:id="@+id/removeLast_button"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Remove Last Line" />-->
 
     <Button
         android:id="@+id/travel_button"
@@ -37,16 +30,17 @@
         android:layout_height="wrap_content"
         android:text="Change Page"
         app:layout_constraintTop_toBottomOf="@id/run_button"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
+
 
     <Button
         android:id="@+id/clear_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Clear"
-        app:layout_constraintTop_toBottomOf="@id/run_button"
-        app:layout_constraintLeft_toRightOf="@id/travel_button"
-        />
+        app:layout_constraintTop_toBottomOf="@id/travel_button"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
     <Button
         android:id="@+id/writeFile_button"
@@ -54,29 +48,120 @@
         android:layout_height="wrap_content"
         android:text="Write to File"
         app:layout_constraintTop_toBottomOf="@id/clear_button"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"/>
+
 
     <Button
         android:id="@+id/python_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Run Python"
-        app:layout_constraintTop_toBottomOf="@id/clear_button"
-        app:layout_constraintLeft_toRightOf="@id/writeFile_button"/>
+        app:layout_constraintTop_toBottomOf="@id/writeFile_button"
+        app:layout_constraintStart_toStartOf="parent"/>
 
-    <FrameLayout
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/python_button">
+        app:layout_constraintTop_toBottomOf="@id/python_button"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="vertical"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/python_button" />
+            android:layout_height="match_parent"
+            app:layoutManager="LinearLayoutManager"
+            android:scrollbars="vertical" />
+
 
     </FrameLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!--<?xml version="1.0" encoding="utf-8"?>-->
+
+<!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:paddingLeft="16dp"-->
+<!--    android:paddingRight="16dp"-->
+<!--    android:orientation="vertical" >-->
+
+<!--    <Space-->
+<!--        android:id="@+id/space"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="40.dp"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        tools:layout_editor_absoluteX="16dp" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/run_button"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Run"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/space"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        />-->
+
+<!--    &lt;!&ndash;    <Button&ndash;&gt;-->
+<!--&lt;!&ndash;        android:id="@+id/removeLast_button"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_width="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:text="Remove Last Line" />&ndash;&gt;-->
+
+<!--    <Button-->
+<!--        android:id="@+id/travel_button"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Change Page"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/run_button"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"/>-->
+
+<!--    <Button-->
+<!--        android:id="@+id/clear_button"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Clear"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/run_button"-->
+<!--        app:layout_constraintLeft_toRightOf="@id/travel_button"-->
+<!--        />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/writeFile_button"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Write to File"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/clear_button"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"/>-->
+
+<!--    <Button-->
+<!--        android:id="@+id/python_button"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Run Python"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/clear_button"-->
+<!--        app:layout_constraintLeft_toRightOf="@id/writeFile_button"/>-->
+
+<!--    <FrameLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/python_button">-->
+
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/recycler_view"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:scrollbars="vertical"-->
+<!--            app:layout_constraintLeft_toLeftOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/python_button" />-->
+
+<!--    </FrameLayout>-->
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
