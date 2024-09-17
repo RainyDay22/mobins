@@ -6,6 +6,7 @@
 <!--        parent="android:Theme.Material.Light" /> material2 theme-->
 
     <style name="Theme.AppMobins" parent="Theme.Material3.Light">
+        <item name="android:windowTranslucentStatus">true</item>
         <item name="colorPrimary">@color/dustyPurple</item>
             <!-- color of button background  -->
         <item name="colorPrimaryVariant">@color/gray</item>
