@@ -1,5 +1,7 @@
 package com.example.appmobins
 
+//from chaquoconsole
+
 import android.app.Application
 import android.content.Context
 import android.content.Intent
@@ -13,12 +15,15 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import java.io.IOException
-
-//from chaquoconsole
 import com.chaquo.python.PyException
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
+
 
 class GlobalVars : Application() {
     companion object {
@@ -57,6 +62,10 @@ class MainActivity : AppCompatActivity() {
         }
         val py = Python.getInstance()
         val module = py.getModule("main")
+
+        //copy assets over
+        copyAssets()
+        Log.d("ASSETS", "copyAssets finished running")
 
         //scroll init
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
@@ -111,12 +120,72 @@ class MainActivity : AppCompatActivity() {
                 dataArray = dataList.toTypedArray()
                 recyclerView.adapter = CustomAdapter(dataArray)
             } catch (e: PyException) {
-            Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+                e.message?.let { it1 -> dataList.add(it1) } //uhhh unsure
+                dataArray = dataList.toTypedArray()
+                recyclerView.adapter = CustomAdapter(dataArray)
         }
     }
 
 
 }
+
+    private fun copyAssets() { //newnewnew need to fix
+        Log.d("ASSETS", "start copyassets run")
+
+        val assetManager =  assets //getAssets()
+        var files: Array<String>? = null
+        try {
+            files = assetManager.list("")
+            Log.d("ASSETS", "AHHHHH this one is _ with size "+files?.size)
+        } catch (e: IOException) {
+            Log.e("ASSETS", "Failed to get asset file list.", e)
+        }
+        for (filename in files!!) {
+            var `in`: InputStream? = null
+            var out: OutputStream? = null
+            try {
+                `in` = assetManager.open(filename)
+
+//                val outDir = Environment.getExternalStorageDirectory().absolutePath + "/X/Y/Z/" //external storage
+                val outDir = getFilesDir().getAbsolutePath() //internal storage
+                val outFile = File(outDir, filename)
+                out = FileOutputStream(outFile)
+                copyFile(`in`, out)
+                `in`.close()
+                `in` = null
+                out.flush()
+                out.close()
+                out = null
+                Log.d("ASSETS", "copied over $filename")
+                /////////// AHHHHHH exec permission
+                if (!outFile.canExecute()) {
+                    Log.d("ASSETS_p", "File is not executable, trying to make it executable ...")
+                    if (outFile.setExecutable(true, false)) {
+                        Log.d("ASSETS_p", "File is executable")
+                    } else {
+                        Log.d("ASSETS_p", "Failed to make the File executable")
+                    }
+                } else {
+                    Log.d("ASSETS_p", "File is already executable");
+                }
+
+                //////////AHHHH
+
+            } catch (e: IOException) {
+                Log.e("ASSETS", "Failed to copy asset file: $filename", e)
+            }
+        }
+    }
+    @Throws(IOException::class)
+    private fun copyFile(`in`: InputStream, out: OutputStream) {
+        val buffer = ByteArray(1024)
+        var read: Int
+        while (`in`.read(buffer).also { read = it } != -1) {
+            out.write(buffer, 0, read)
+        }
+    }
+
 
     private fun writeData(words:String, filename: String) {
         val data = words
