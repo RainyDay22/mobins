@@ -6,17 +6,17 @@
         <menu>
             <item
                 android:id="@+id/inbox_item"
-                android:icon="@drawable/ic_inbox"
+                android:icon="@drawable/baseline_settings_24"
                 android:title="Item1"
                 android:checkable="true"/>
             <item
                 android:id="@+id/outbox_item"
-                android:icon="@drawable/ic_inbox"
+                android:icon="@drawable/baseline_settings_24"
                 android:title="Item2"
                 android:checkable="true"/>
             <item
                 android:id="@+id/favourites_item"
-                android:icon="@drawable/ic_inbox"
+                android:icon="@drawable/baseline_settings_24"
                 android:title="Item3"
                 android:checkable="true"/>
         </menu>

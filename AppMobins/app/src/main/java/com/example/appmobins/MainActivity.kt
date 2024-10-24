@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.travel_button)
             .setOnClickListener {
-                val travelIntent = Intent(this@MainActivity, PageActivity::class.java)
+                val travelIntent = Intent(this@MainActivity, NavActivity::class.java)//PageActivity::class.java)
                 startActivity(travelIntent)
                 Log.d("NAV", "Tried to nav to other activity")
 
@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
 //                recyclerView.adapter = CustomAdapter(dataArray)
             }
 
-        findViewById<Button>(R.id.python_button).setOnClickListener { //under test
+        findViewById<Button>(R.id.python_button).setOnClickListener {
             try {
                 val pystr = module.callAttr("main") //function call w arg
                 dataList.add(pystr.toJava(String::class.java)) //uhhh unsure
@@ -251,20 +251,3 @@ class CustomAdapter(val lineList: Array<String>) :
     }
 }
 
-fun fib(l:Int, b4l:Int, len:Int, rep_last:Boolean):String{
-
-    var last = l
-    var b4last = b4l
-    var temp:Int
-    var accum =""
-
-    if(rep_last){ accum= accum+"${b4last} ${last} "}
-
-    repeat(len-2){
-        temp = last
-        last = last+b4last
-        b4last = temp
-        accum = accum +"${last} "
-    }
-    return accum
-}

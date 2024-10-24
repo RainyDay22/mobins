@@ -25,6 +25,8 @@
         </activity>
         <activity
         android:name="PageActivity" />
+        <activity
+            android:name="NavActivity" />
 
     </application>
 
