@@ -1,7 +1,6 @@
 package com.example.appmobins
 
 //from chaquoconsole
-
 import android.app.Application
 import android.content.Context
 import android.content.Intent
@@ -18,12 +17,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chaquo.python.PyException
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import java.io.BufferedReader
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.io.InputStreamReader
 import java.io.OutputStream
-
 
 class GlobalVars : Application() {
     companion object {
@@ -43,6 +43,7 @@ class GlobalVars : Application() {
             switchState=state}
     }
 }
+
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,9 +103,14 @@ class MainActivity : AppCompatActivity() {
 //                recyclerView.adapter = CustomAdapter(dataArray)
 //            }
 
-        findViewById<Button>(R.id.writeFile_button)
+        findViewById<Button>(R.id.Stop_button)
             .setOnClickListener {
-                writeData("wahoo", "mytestfile.txt") //writing
+
+                // stopping diag_revealer
+                stopCollection()
+
+                //writing
+//                writeData("wahoo", "mytestfile.txt") //writing
 
                 //reading
 //                val output = readData("mytestfile.txt")
@@ -113,31 +119,46 @@ class MainActivity : AppCompatActivity() {
 //                recyclerView.adapter = CustomAdapter(dataArray)
             }
 
-        findViewById<Button>(R.id.python_button).setOnClickListener { //under test
-            try {
-                val pystr = module.callAttr("main") //function call w arg
-                dataList.add(pystr.toJava(String::class.java)) //uhhh unsure
-                dataArray = dataList.toTypedArray()
-                recyclerView.adapter = CustomAdapter(dataArray)
-            } catch (e: PyException) {
-                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
-                e.message?.let { it1 -> dataList.add(it1) } //uhhh unsure
-                dataArray = dataList.toTypedArray()
-                recyclerView.adapter = CustomAdapter(dataArray)
-        }
-    }
+        findViewById<Button>(R.id.python_button).setOnClickListener {
+            val thread = Thread {
+                // Simulate some work in the background
+                Log.d("MainActivity", "Thread is running...")
+                try {
+                    val pystr = module.callAttr("main") //function call w arg
+                    dataList.add(pystr.toJava(String::class.java))
+                    } catch (e: PyException) {
+                    Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+                    e.message?.let { it1 -> dataList.add(it1) }
+                }
 
+                // Update the UI on the main thread
+                runOnUiThread {
+                    dataArray = dataList.toTypedArray()
+                    recyclerView.adapter = CustomAdapter(dataArray)
+                    Log.d("MainActivity", "Updating UI from the background thread!")
+                }
+            }
+            thread.start()  // Start the thread
+
+//            try {
+//                val pystr = module.callAttr("main") //function call w arg
+//                dataList.add(pystr.toJava(String::class.java))
+//            } catch (e: PyException) {
+//                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+//                e.message?.let { it1 -> dataList.add(it1) }
+//            }
+//            dataArray = dataList.toTypedArray()
+//            recyclerView.adapter = CustomAdapter(dataArray)
+        }
 
 }
-
-    private fun copyAssets() { //newnewnew need to fix
+    private fun copyAssets() {
         Log.d("ASSETS", "start copyassets run")
 
         val assetManager =  assets //getAssets()
         var files: Array<String>? = null
         try {
             files = assetManager.list("")
-            Log.d("ASSETS", "AHHHHH this one is _ with size "+files?.size)
         } catch (e: IOException) {
             Log.e("ASSETS", "Failed to get asset file list.", e)
         }
@@ -251,20 +272,26 @@ class CustomAdapter(val lineList: Array<String>) :
     }
 }
 
-fun fib(l:Int, b4l:Int, len:Int, rep_last:Boolean):String{
+fun stopCollection() {
+    // Run the "ps" command
+    val processBuilder = ProcessBuilder("su","-c","ps","-e")
+    val process = processBuilder.start()
+    Log.d("stopbutton","built process")
 
-    var last = l
-    var b4last = b4l
-    var temp:Int
-    var accum =""
+    // Capture the output
+    val res = BufferedReader(InputStreamReader(process.inputStream)).readLines()
 
-    if(rep_last){ accum= accum+"${b4last} ${last} "}
+    for (item in res) {
+        Log.d("stopbutton", item)
+        if (item.contains("diag_revealer")) {
+                // Split the line to extract the PID
+                val pid = item.split("\\s+".toRegex())[1]
+                val cmd = "kill $pid"
+                Log.d("stopbutton", "kill command is "+cmd)
 
-    repeat(len-2){
-        temp = last
-        last = last+b4last
-        b4last = temp
-        accum = accum +"${last} "
+                // Run the "kill" command
+                ProcessBuilder("su", "-c", cmd).start()
+            }
+        }
     }
-    return accum
-}
+

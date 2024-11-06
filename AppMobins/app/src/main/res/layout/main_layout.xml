@@ -16,6 +16,7 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraint_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
@@ -32,7 +33,7 @@
                 android:id="@+id/run_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Run"
+                android:text="Print a line"
                 app:layout_constraintTop_toBottomOf="@id/space"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -56,10 +57,10 @@
 
 
             <Button
-                android:id="@+id/writeFile_button"
+                android:id="@+id/Stop_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Write to File"
+                android:text="Stop"
                 app:layout_constraintTop_toBottomOf="@id/clear_button"
                 app:layout_constraintStart_toStartOf="parent"/>
 
@@ -69,7 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Run Python"
-                app:layout_constraintTop_toBottomOf="@id/writeFile_button"
+                app:layout_constraintTop_toBottomOf="@id/Stop_button"
                 app:layout_constraintStart_toStartOf="parent"/>
 
 
@@ -85,9 +86,9 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     app:layoutManager="LinearLayoutManager"
-                    android:scrollbars="vertical" />
+                    android:scrollbars="vertical"/>
 
 
             </FrameLayout>

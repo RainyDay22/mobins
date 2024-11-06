@@ -1,46 +1,37 @@
-try:
-    from mobile_insight import monitor, analyzer
-    # from mobile_insight import fake, more_fake # this causes error, app quits, not log msg
+ret_val= "global var?"
+ANDROID_SHELL = "/system/bin/sh" ##
 
-    #!/usr/bin/python
-    # Filename: lte-measurement-example
+try:
+    """                                                                                                                                                                   
+    Cellular event logging main app                                                                                                                                       
+    """
     import os
     import sys
+    import shutil
+    import traceback
+    from mobile_insight.monitor import OnlineMonitor
+    # from logging_analyzer import LoggingAnalyzer
+    #removed all vars for log_enable
 
-    # Import MobileInsight modules
-    from mobile_insight.analyzer import *
-    from mobile_insight.monitor import OfflineReplayer
 
 except ImportError as e:
-    # print(e) #doesn't really execute since console ops aren't implemented
-    ret_val = e #seems to not run quite right as a work around to print
-
+    ret_val = repr(e) #seems to not run quite right as a work around to print
 
 def main():
-    ret_val = "hey Python"
-    replayer = OfflineReplayer()
+    global ret_val
+
+    try:
+        src = OnlineMonitor()
+        src.set_skip_decoding(False)
+        log_dir = "/data/data/com.example.appmobins/files"  #hardcoded
+        src.set_log_directory(log_dir)
+    # #removed all specific log_enable mentions
+        src.enable_log_all()
+    # loggingAnalyzer = LoggingAnalyzer(plugin_config)
+    # loggingAnalyzer.set_source(src)
+        src.run()
+
+    except Exception:
+        ret_val= traceback.format_exc()
+
     return ret_val
-    # if len(sys.argv) < 3:
-    #     ret_val+="Error: please specify physical port name and baudrate."
-    #     # print((__file__, "SERIAL_PORT_NAME BAUNRATE"))
-    #     sys.exit(1)
-    #
-    # # Initialize a DM monitor
-    # src = OnlineMonitor()
-    # src.set_serial_port(sys.argv[1])  # the serial port to collect the traces
-    # src.set_baudrate(int(sys.argv[2]))  # the baudrate of the port
-    #
-    # dumper = MsgLogger()
-    # dumper.set_source(src)
-    # dumper.set_decoding(MsgLogger.XML)  # decode the message as xml
-    #
-    # nas_analyzer = LteNasAnalyzer()
-    # nas_analyzer.set_source(src)
-    #
-    # # save the analysis result. All analyzers share the same output file.
-    # dumper.set_log("nas-analyzer-example.txt")
-    # nas_analyzer.set_log("nas-analyzer-example.txt")
-    #
-    # # Start the monitoring
-    # src.run()
-    # return ret_val
