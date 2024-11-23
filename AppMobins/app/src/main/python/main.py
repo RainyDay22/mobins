@@ -1,4 +1,4 @@
-ret_val= "global var?"
+ret_val= "this is an unchanged global variable"
 ANDROID_SHELL = "/system/bin/sh" ##
 
 try:
@@ -21,15 +21,16 @@ def main():
     global ret_val
 
     try:
-        src = OnlineMonitor()
-        src.set_skip_decoding(False)
-        log_dir = "/data/data/com.example.appmobins/files"  #hardcoded
-        src.set_log_directory(log_dir)
-    # #removed all specific log_enable mentions
-        src.enable_log_all()
-    # loggingAnalyzer = LoggingAnalyzer(plugin_config)
-    # loggingAnalyzer.set_source(src)
-        src.run()
+        print("helloworld")
+    #     src = OnlineMonitor()
+    #     src.set_skip_decoding(False)
+    #     log_dir = "/data/data/com.example.appmobins/files"  #hardcoded
+    #     src.set_log_directory(log_dir)
+    # # #removed all specific log_enable mentions
+    #     src.enable_log_all()
+    # # loggingAnalyzer = LoggingAnalyzer(plugin_config)
+    # # loggingAnalyzer.set_source(src)
+    #     src.run()
 
     except Exception:
         ret_val= traceback.format_exc()

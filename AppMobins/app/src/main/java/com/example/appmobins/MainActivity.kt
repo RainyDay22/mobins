@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.chaquo.python.PyException
+import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
 import java.io.BufferedReader
@@ -44,8 +45,17 @@ class GlobalVars : Application() {
     }
 }
 
-
 class MainActivity : AppCompatActivity() {
+
+    var dataList= mutableListOf<String>("line 1")
+
+    private lateinit var sys: PyObject
+    private lateinit var stdout: PyObject
+    private var realStdout: PyObject? = null
+
+    private lateinit var recyclerView:RecyclerView
+    private lateinit var c_adapter:CustomAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_layout)
@@ -53,8 +63,10 @@ class MainActivity : AppCompatActivity() {
         GlobalVars.setGlobalVarValue("wow")
         val gVal = GlobalVars.getGlobalVarValue()
 
+        Log.d("kotlin", "probably another null problem")
         //simulated output/program to run
-        val dataList= mutableListOf<String>("line 1", gVal!!)//, "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3","line 1", "line 2", "line 3")
+//        val dataList= mutableListOf<String>("line 1", gVal!!)
+        dataList= mutableListOf<String>("line 1", gVal!!)
         var dataArray = dataList.toTypedArray()
 
         //setting up python
@@ -68,33 +80,60 @@ class MainActivity : AppCompatActivity() {
         copyAssets()
         Log.d("ASSETS", "copyAssets finished running")
 
+
         //scroll init
-        val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
-        recyclerView.adapter = CustomAdapter(dataArray)
+//        var recyclerView: RecyclerView = findViewById(R.id.recycler_view)
+        recyclerView = findViewById(R.id.recycler_view)
+        c_adapter = CustomAdapter(dataArray)
+        recyclerView.adapter = c_adapter
+
+//        output2("hiya", recyclerView)
+
+        //io section
+        val console = py.getModule("stdio_redirect")
+//        val sys = py.getModule("sys")
+        sys = py.getModule("sys")
+//        val stdout: PyObject
+//        val stderr: PyObject
+//        val realStdout: PyObject?
+//        val realStderr: PyObject?
+
+        Log.d("std_io", "entered io func")
+        realStdout = sys["stdout"]
+//        realStderr = sys["stderr"]
+        fun redirectOutput(stream: PyObject?, methodName: String): PyObject {
+            Log.d("std_io", "entered redirect func")
+            return console.callAttr("ConsoleOutputStream", stream, this, methodName)//, recyclerView)
+//            return console.callAttr("ConsoleOutputStream", stream, this, methodName)
+        }
+        stdout = redirectOutput(realStdout, "output")
+//        stderr = redirectOutput(realStderr, "outputError")
+        Log.d("std_io", "end io func")
 
         findViewById<Button>(R.id.run_button)
             .setOnClickListener {
                 Log.d("BUTTONS", "User tapped the Runbutton")
-                //dataList.add(fib(1,1,5,true))
-                dataList.add(GlobalVars.getGlobalVarValue()!!)
-                dataArray = dataList.toTypedArray()
-                recyclerView.adapter = CustomAdapter(dataArray)
+
+//                dataList.add(GlobalVars.getGlobalVarValue()!!)
+//                dataArray = dataList.toTypedArray()
+//                recyclerView.adapter = CustomAdapter(dataArray)
+                c_adapter.addItems(listOf(GlobalVars.getGlobalVarValue()!!))
             }
 
-        findViewById<Button>(R.id.travel_button)
-            .setOnClickListener {
-                val travelIntent = Intent(this@MainActivity, PageActivity::class.java)
-                startActivity(travelIntent)
-                Log.d("NAV", "Tried to nav to other activity")
-
-            }
-
-        findViewById<Button>(R.id.clear_button)
-            .setOnClickListener {
-                dataList.clear()
-                dataArray = dataList.toTypedArray()
-                recyclerView.adapter = CustomAdapter(dataArray)
-            }
+//        findViewById<Button>(R.id.travel_button)
+//            .setOnClickListener {
+//                val travelIntent = Intent(this@MainActivity, PageActivity::class.java)
+//                startActivity(travelIntent)
+//                Log.d("NAV", "Tried to nav to other activity")
+//
+//            }
+//
+//        findViewById<Button>(R.id.clear_button)
+//            .setOnClickListener {
+//                dataList.clear()
+//                dataArray = dataList.toTypedArray()
+//                recyclerView.adapter = CustomAdapter(dataArray)
+//            }
 
 //        findViewById<Button>(R.id.removeLast_button)
 //            .setOnClickListener {
@@ -127,7 +166,7 @@ class MainActivity : AppCompatActivity() {
                     val pystr = module.callAttr("main") //function call w arg
                     dataList.add(pystr.toJava(String::class.java))
                     } catch (e: PyException) {
-                    Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+//                    Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
                     e.message?.let { it1 -> dataList.add(it1) }
                 }
 
@@ -139,19 +178,35 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             thread.start()  // Start the thread
-
-//            try {
-//                val pystr = module.callAttr("main") //function call w arg
-//                dataList.add(pystr.toJava(String::class.java))
-//            } catch (e: PyException) {
-//                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
-//                e.message?.let { it1 -> dataList.add(it1) }
-//            }
-//            dataArray = dataList.toTypedArray()
-//            recyclerView.adapter = CustomAdapter(dataArray)
         }
 
-}
+    }
+
+    fun output(text:String?) {
+//        dataList.add(text.toString())
+//        val dataArray = dataList.toTypedArray()
+//        recyclerView.adapter = CustomAdapter(dataArray)
+        c_adapter.addItems(listOf(text!!))
+        Log.d("output", "output function")
+    }
+
+//    fun output(text:String?){
+//        Log.d("output", "huhhhhh "+text)
+//        Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+//    }
+
+    override fun onResume() {
+        super.onResume()
+        sys["stdout"] = stdout
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (!isChangingConfigurations) {
+            sys["stdout"] = realStdout
+        }
+    }
+
     private fun copyAssets() {
         Log.d("ASSETS", "start copyassets run")
 
@@ -198,6 +253,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     @Throws(IOException::class)
     private fun copyFile(`in`: InputStream, out: OutputStream) {
         val buffer = ByteArray(1024)
@@ -206,7 +262,6 @@ class MainActivity : AppCompatActivity() {
             out.write(buffer, 0, read)
         }
     }
-
 
     private fun writeData(words:String, filename: String) {
         val data = words
@@ -240,11 +295,9 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-
-class CustomAdapter(val lineList: Array<String>) :
+class CustomAdapter(private var lineList: Array<String>) :
     RecyclerView.Adapter<CustomAdapter.ItemViewHolder>() {
 
-    // Describes an item view and its place within the RecyclerView
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val lineTextView: TextView = itemView.findViewById(R.id.item_text)
 
@@ -253,24 +306,33 @@ class CustomAdapter(val lineList: Array<String>) :
         }
     }
 
-    // Returns a new ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_layout, parent, false)
-
         return ItemViewHolder(view)
     }
 
-    // Returns size of data list
     override fun getItemCount(): Int {
         return lineList.size
     }
 
-    // Displays data at a certain position
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         holder.bind(lineList[position])
     }
+
+    fun addItems(newItems: List<String>) {
+        val startPosition = lineList.size
+        lineList += newItems
+        notifyItemRangeInserted(startPosition, newItems.size)
+    }
+
+    // Update the list and notify the adapter
+    fun updateList(newLineList: Array<String>) {
+        lineList = newLineList
+        notifyDataSetChanged()
+    }
 }
+
 
 fun stopCollection() {
     // Run the "ps" command
