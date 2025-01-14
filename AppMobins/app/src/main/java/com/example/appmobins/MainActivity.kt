@@ -65,7 +65,6 @@ class MainActivity : AppCompatActivity() {
 
         Log.d("kotlin", "probably another null problem")
         //simulated output/program to run
-//        val dataList= mutableListOf<String>("line 1", gVal!!)
         dataList= mutableListOf<String>("line 1", gVal!!)
         var dataArray = dataList.toTypedArray()
 
@@ -87,28 +86,27 @@ class MainActivity : AppCompatActivity() {
         c_adapter = CustomAdapter(dataArray)
         recyclerView.adapter = c_adapter
 
-//        output2("hiya", recyclerView)
 
-        //io section
-        val console = py.getModule("stdio_redirect")
-//        val sys = py.getModule("sys")
+//        //io section
+//        val console = py.getModule("stdio_redirect")
         sys = py.getModule("sys")
-//        val stdout: PyObject
-//        val stderr: PyObject
-//        val realStdout: PyObject?
-//        val realStderr: PyObject?
+////        val stdout: PyObject
+////        val stderr: PyObject
+////        val realStdout: PyObject?
+////        val realStderr: PyObject?
+//
+//        Log.d("std_io", "entered io func")
+//        realStdout = sys["stdout"]
+////        realStderr = sys["stderr"]
+//        fun redirectOutput(stream: PyObject?, methodName: String): PyObject {
+//            Log.d("std_io", "entered redirect func")
+//            return console.callAttr("ConsoleOutputStream", stream, this, methodName)//, recyclerView)
+////            return console.callAttr("ConsoleOutputStream", stream, this, methodName)
+//        }
+//        stdout = redirectOutput(realStdout, "output")
+////        stderr = redirectOutput(realStderr, "outputError")
+//        Log.d("std_io", "end io func")
 
-        Log.d("std_io", "entered io func")
-        realStdout = sys["stdout"]
-//        realStderr = sys["stderr"]
-        fun redirectOutput(stream: PyObject?, methodName: String): PyObject {
-            Log.d("std_io", "entered redirect func")
-            return console.callAttr("ConsoleOutputStream", stream, this, methodName)//, recyclerView)
-//            return console.callAttr("ConsoleOutputStream", stream, this, methodName)
-        }
-        stdout = redirectOutput(realStdout, "output")
-//        stderr = redirectOutput(realStderr, "outputError")
-        Log.d("std_io", "end io func")
 
         findViewById<Button>(R.id.run_button)
             .setOnClickListener {
@@ -145,8 +143,14 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.Stop_button)
             .setOnClickListener {
 
-                // stopping diag_revealer
-                stopCollection()
+                //halting through _stop_collection
+                Log.d("halt", "halt start")
+                module.callAttr("halt_daemon")
+                Log.d("halt", "halt end")
+
+
+//                // stopping diag_revealer
+//                stopCollection()
 
                 //writing
 //                writeData("wahoo", "mytestfile.txt") //writing
@@ -183,29 +187,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun output(text:String?) {
+        runOnUiThread {
 //        dataList.add(text.toString())
 //        val dataArray = dataList.toTypedArray()
 //        recyclerView.adapter = CustomAdapter(dataArray)
-        c_adapter.addItems(listOf(text!!))
-        Log.d("output", "output function")
-    }
-
-//    fun output(text:String?){
-//        Log.d("output", "huhhhhh "+text)
-//        Toast.makeText(this, text, Toast.LENGTH_LONG).show()
-//    }
-
-    override fun onResume() {
-        super.onResume()
-        sys["stdout"] = stdout
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if (!isChangingConfigurations) {
-            sys["stdout"] = realStdout
+            c_adapter.addItems(listOf(text!!))
+            Log.d("output", "output function")
         }
     }
+
+
+//    override fun onResume() { //for io redirect
+//        super.onResume()
+//        sys["stdout"] = stdout
+//    }
+//
+//    override fun onPause() { //for io redirect
+//        super.onPause()
+//        if (!isChangingConfigurations) {
+//            sys["stdout"] = realStdout
+//        }
+//    }
 
     private fun copyAssets() {
         Log.d("ASSETS", "start copyassets run")
@@ -344,7 +346,7 @@ fun stopCollection() {
     val res = BufferedReader(InputStreamReader(process.inputStream)).readLines()
 
     for (item in res) {
-        Log.d("stopbutton", item)
+//        Log.d("stopbutton", item)
         if (item.contains("diag_revealer")) {
                 // Split the line to extract the PID
                 val pid = item.split("\\s+".toRegex())[1]
