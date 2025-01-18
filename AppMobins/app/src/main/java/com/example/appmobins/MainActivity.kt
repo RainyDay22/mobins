@@ -50,11 +50,10 @@ class MainActivity : AppCompatActivity() {
     var dataList= mutableListOf<String>("line 1")
 
     private lateinit var sys: PyObject
-    private lateinit var stdout: PyObject
-    private var realStdout: PyObject? = null
 
     private lateinit var recyclerView:RecyclerView
     private lateinit var c_adapter:CustomAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +62,6 @@ class MainActivity : AppCompatActivity() {
         GlobalVars.setGlobalVarValue("wow")
         val gVal = GlobalVars.getGlobalVarValue()
 
-        Log.d("kotlin", "probably another null problem")
         //simulated output/program to run
         dataList= mutableListOf<String>("line 1", gVal!!)
         var dataArray = dataList.toTypedArray()
@@ -74,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         }
         val py = Python.getInstance()
         val module = py.getModule("main")
+        module.put("activity", this)
 
         //copy assets over
         copyAssets()
@@ -86,36 +85,13 @@ class MainActivity : AppCompatActivity() {
         c_adapter = CustomAdapter(dataArray)
         recyclerView.adapter = c_adapter
 
-
-//        //io section
-//        val console = py.getModule("stdio_redirect")
-        sys = py.getModule("sys")
-////        val stdout: PyObject
-////        val stderr: PyObject
-////        val realStdout: PyObject?
-////        val realStderr: PyObject?
-//
-//        Log.d("std_io", "entered io func")
-//        realStdout = sys["stdout"]
-////        realStderr = sys["stderr"]
-//        fun redirectOutput(stream: PyObject?, methodName: String): PyObject {
-//            Log.d("std_io", "entered redirect func")
-//            return console.callAttr("ConsoleOutputStream", stream, this, methodName)//, recyclerView)
-////            return console.callAttr("ConsoleOutputStream", stream, this, methodName)
-//        }
-//        stdout = redirectOutput(realStdout, "output")
-////        stderr = redirectOutput(realStderr, "outputError")
-//        Log.d("std_io", "end io func")
+//        sys = py.getModule("sys") // not useful now but might be later?
 
 
         findViewById<Button>(R.id.run_button)
             .setOnClickListener {
                 Log.d("BUTTONS", "User tapped the Runbutton")
-
-//                dataList.add(GlobalVars.getGlobalVarValue()!!)
-//                dataArray = dataList.toTypedArray()
-//                recyclerView.adapter = CustomAdapter(dataArray)
-                c_adapter.addItems(listOf(GlobalVars.getGlobalVarValue()!!))
+                output(GlobalVars.getGlobalVarValue()!!)
             }
 
 //        findViewById<Button>(R.id.travel_button)
@@ -148,10 +124,6 @@ class MainActivity : AppCompatActivity() {
                 module.callAttr("halt_daemon")
                 Log.d("halt", "halt end")
 
-
-//                // stopping diag_revealer
-//                stopCollection()
-
                 //writing
 //                writeData("wahoo", "mytestfile.txt") //writing
 
@@ -163,51 +135,29 @@ class MainActivity : AppCompatActivity() {
             }
 
         findViewById<Button>(R.id.python_button).setOnClickListener {
-            val thread = Thread {
+            val pythread = Thread {
                 // Simulate some work in the background
                 Log.d("MainActivity", "Thread is running...")
                 try {
                     val pystr = module.callAttr("main") //function call w arg
-                    dataList.add(pystr.toJava(String::class.java))
+                    output(pystr.toJava(String::class.java))
                     } catch (e: PyException) {
-//                    Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
-                    e.message?.let { it1 -> dataList.add(it1) }
+
+                    output("Error: ${e.message}") //pykot
                 }
 
-                // Update the UI on the main thread
-                runOnUiThread {
-                    dataArray = dataList.toTypedArray()
-                    recyclerView.adapter = CustomAdapter(dataArray)
-                    Log.d("MainActivity", "Updating UI from the background thread!")
-                }
             }
-            thread.start()  // Start the thread
+            pythread.start()  // Start the thread
         }
 
     }
 
     fun output(text:String?) {
         runOnUiThread {
-//        dataList.add(text.toString())
-//        val dataArray = dataList.toTypedArray()
-//        recyclerView.adapter = CustomAdapter(dataArray)
             c_adapter.addItems(listOf(text!!))
             Log.d("output", "output function")
         }
     }
-
-
-//    override fun onResume() { //for io redirect
-//        super.onResume()
-//        sys["stdout"] = stdout
-//    }
-//
-//    override fun onPause() { //for io redirect
-//        super.onPause()
-//        if (!isChangingConfigurations) {
-//            sys["stdout"] = realStdout
-//        }
-//    }
 
     private fun copyAssets() {
         Log.d("ASSETS", "start copyassets run")
