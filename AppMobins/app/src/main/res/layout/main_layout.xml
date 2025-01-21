@@ -74,21 +74,23 @@
                 app:layout_constraintStart_toStartOf="parent"/>
 
 
-            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/python_button"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/python_button"
+                app:layout_constrainedHeight="true"
                 >
 
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:scrollbars="vertical"
                     app:layoutManager="LinearLayoutManager"
-                    android:scrollbars="vertical"/>
+                    />
 
 
             </FrameLayout>
