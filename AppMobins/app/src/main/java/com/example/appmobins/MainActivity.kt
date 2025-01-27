@@ -49,8 +49,6 @@ class MainActivity : AppCompatActivity() {
 
     var dataList= mutableListOf<String>("line 1")
 
-    private lateinit var sys: PyObject
-
     private lateinit var recyclerView:RecyclerView
     private lateinit var c_adapter:CustomAdapter
 
@@ -80,13 +78,9 @@ class MainActivity : AppCompatActivity() {
 
 
         //scroll init
-//        var recyclerView: RecyclerView = findViewById(R.id.recycler_view)
         recyclerView = findViewById(R.id.recycler_view)
         c_adapter = CustomAdapter(dataArray)
         recyclerView.adapter = c_adapter
-
-//        sys = py.getModule("sys") // not useful now but might be later?
-
 
         findViewById<Button>(R.id.run_button)
             .setOnClickListener {
@@ -94,20 +88,18 @@ class MainActivity : AppCompatActivity() {
                 output(GlobalVars.getGlobalVarValue()!!)
             }
 
-//        findViewById<Button>(R.id.travel_button)
-//            .setOnClickListener {
-//                val travelIntent = Intent(this@MainActivity, PageActivity::class.java)
-//                startActivity(travelIntent)
-//                Log.d("NAV", "Tried to nav to other activity")
-//
-//            }
-//
-//        findViewById<Button>(R.id.clear_button)
-//            .setOnClickListener {
-//                dataList.clear()
-//                dataArray = dataList.toTypedArray()
-//                recyclerView.adapter = CustomAdapter(dataArray)
-//            }
+        findViewById<Button>(R.id.travel_button)
+            .setOnClickListener {
+                val travelIntent = Intent(this@MainActivity, PageActivity::class.java)
+                startActivity(travelIntent)
+                Log.d("NAV", "Tried to nav to other activity")
+
+            }
+
+        findViewById<Button>(R.id.clear_button)
+            .setOnClickListener {
+                c_adapter.updateList(arrayOf<String>()) //overwrite list with emtpy list to display as terminal output
+            }
 
 //        findViewById<Button>(R.id.removeLast_button)
 //            .setOnClickListener {
@@ -284,28 +276,4 @@ class CustomAdapter(private var lineList: Array<String>) :
         notifyDataSetChanged()
     }
 }
-
-
-fun stopCollection() {
-    // Run the "ps" command
-    val processBuilder = ProcessBuilder("su","-c","ps","-e")
-    val process = processBuilder.start()
-    Log.d("stopbutton","built process")
-
-    // Capture the output
-    val res = BufferedReader(InputStreamReader(process.inputStream)).readLines()
-
-    for (item in res) {
-//        Log.d("stopbutton", item)
-        if (item.contains("diag_revealer")) {
-                // Split the line to extract the PID
-                val pid = item.split("\\s+".toRegex())[1]
-                val cmd = "kill $pid"
-                Log.d("stopbutton", "kill command is "+cmd)
-
-                // Run the "kill" command
-                ProcessBuilder("su", "-c", cmd).start()
-            }
-        }
-    }
 

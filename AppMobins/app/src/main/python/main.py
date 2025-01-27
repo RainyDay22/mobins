@@ -1,4 +1,4 @@
-ret_val= "this is an unchanged global variable"
+ret_val= "=====this is an unchanged global variable====="
 ANDROID_SHELL = "/system/bin/sh" ##
 src = None
 
@@ -15,18 +15,18 @@ try:
     #removed all vars for log_enable
     from java.lang import Runnable ##pykot
     import java
+    from datetime import datetime
 
 except ImportError as e:
     ret_val = repr(e) #seems to not run quite right as a work around to print
 
 def halt_daemon():
-    print("halt start")
+    print("=========halt start=========")
     global src
     if src==None: return
 
     src._pause_collection()
-    print("halt end")
-
+    print("=========halt end=========")
 
 
 class AndroidStream: ###pykot
@@ -52,12 +52,6 @@ class AndroidStream: ###pykot
     def flush(self):
         pass  # No-op to satisfy the file-like interface
 
-def pykot_test(): #truly unused rn
-    import time
-    for i in range(5):
-        print(f"Line {i}")
-        time.sleep(1)
-
 
 def main():
     global ret_val
@@ -68,15 +62,20 @@ def main():
         sys.stdout = AndroidStream(activity)
         sys.stderr = AndroidStream(activity)
 
-        print("helloworld") #std testing
-        print("fight me")
+        print("=========start main=========") #std testing
 
         # pykot_test() #tested sequential printing
+
+        date_time=datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
 
         src = OnlineMonitor()
         src.set_skip_decoding(False)
         log_dir = "/data/data/com.example.appmobins/files"  #hardcoded
         src.set_log_directory(log_dir)
+        #log file name to be diaglog_yyyymmdd_hhmmss.mi2log
+        log_name = "diaglog_"+date_time+".mi2log"
+        log_file_path = os.path.join(log_dir, log_name) #mi2log attempt
+        src.save_log_as(log_file_path) #mi2log attempt
     # #removed all specific log_enable mentions
         src.enable_log_all()
     # loggingAnalyzer = LoggingAnalyzer(plugin_config)
