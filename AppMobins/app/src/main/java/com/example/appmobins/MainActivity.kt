@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chaquo.python.PyException
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import com.google.android.material.navigation.NavigationView
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -88,6 +89,12 @@ class MainActivity : AppCompatActivity() {
         // to make the Navigation drawer icon always appear on the action bar
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        // Set up NavigationView
+        val navigationView: NavigationView = findViewById(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            handleNavigationItem(menuItem)
+            true
+        }
         //scroll init
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
         recyclerView.adapter = CustomAdapter(dataArray)
@@ -123,7 +130,7 @@ class MainActivity : AppCompatActivity() {
 //                recyclerView.adapter = CustomAdapter(dataArray)
 //            }
 
-        findViewById<Button>(R.id.writeFile_button)
+        findViewById<Button>(R.id.write_button)
             .setOnClickListener {
                 writeData("wahoo", "mytestfile.txt") //writing
 
@@ -132,17 +139,6 @@ class MainActivity : AppCompatActivity() {
 //                dataList.add(output)
 //                dataArray = dataList.toTypedArray()
 //                recyclerView.adapter = CustomAdapter(dataArray)
-
-//                //menu, ip
-//                drawerLayout = findViewById<Button>(R.id.python_button)
-//                drawerLayout.open()
-//
-//                navigationView.setNavigationItemSelectedListener { menuItem ->
-//                    // Handle menu item selected
-//                    menuItem.isChecked = true
-//                    drawerLayout.close()
-//                    true
-//                }
             }
 
         findViewById<Button>(R.id.python_button).setOnClickListener {
@@ -162,21 +158,33 @@ class MainActivity : AppCompatActivity() {
 
 }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
-            return true
-        } else {
-            when (item.itemId) {
-                R.id.change_page -> {
-                    Log.d("NAV", "Menu, Tried to nav to other activity")
-                    return true
-                }
-                else -> { return super.onOptionsItemSelected(item)}
-            }
-        }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean { //menu
+        return if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+            true
+        } else super.onOptionsItemSelected(item)
     }
 
-    private fun copyAssets() { //newnewnew need to fix
+    private fun handleNavigationItem(menuItem: MenuItem) { //menu
+        when (menuItem.itemId) {
+            R.id.item1 -> {
+                Toast.makeText(this, "Home selected", Toast.LENGTH_SHORT).show()
+                val travelIntent = Intent(this@MainActivity, NavActivity::class.java)//PageActivity::class.java)
+                startActivity(travelIntent)
+                Log.d("NAV", "Tried to nav to other activity")
+            }
+            R.id.item2 -> {
+                Toast.makeText(this, "Profile selected", Toast.LENGTH_SHORT).show()
+            }
+            R.id.item3 -> {
+                Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT).show()
+            }
+        }
+        // Close the drawer after handling the click
+        drawerLayout.closeDrawers()
+    }
+
+    private fun copyAssets() {
         Log.d("ASSETS", "start copyassets run")
 
         val assetManager =  assets //getAssets()
