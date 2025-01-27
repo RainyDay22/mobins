@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AppMobins</string>
+    <string name="nav_open">open menu</string>
+    <string name="nav_close">close menu</string>
 </resources>

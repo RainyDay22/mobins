@@ -8,12 +8,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.chaquo.python.PyException
 import com.chaquo.python.Python
@@ -45,6 +48,9 @@ class GlobalVars : Application() {
 }
 
 class MainActivity : AppCompatActivity() {
+    lateinit var drawerLayout: DrawerLayout //menu ip, needed import
+    lateinit var actionBarDrawerToggle: ActionBarDrawerToggle //menu ip, needed import
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_layout)
@@ -66,6 +72,21 @@ class MainActivity : AppCompatActivity() {
         //copy assets over
         copyAssets()
         Log.d("ASSETS", "copyAssets finished running")
+
+
+        //menu ip
+        // drawer layout instance to toggle the menu icon to open
+        // drawer and back button to close drawer
+        drawerLayout = findViewById(R.id.drawerLayout)
+        actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close)
+
+        // pass the Open and Close toggle for the drawer layout listener
+        // to toggle the button
+        drawerLayout.addDrawerListener(actionBarDrawerToggle)
+        actionBarDrawerToggle.syncState()
+
+        // to make the Navigation drawer icon always appear on the action bar
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         //scroll init
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
@@ -111,6 +132,17 @@ class MainActivity : AppCompatActivity() {
 //                dataList.add(output)
 //                dataArray = dataList.toTypedArray()
 //                recyclerView.adapter = CustomAdapter(dataArray)
+
+//                //menu, ip
+//                drawerLayout = findViewById<Button>(R.id.python_button)
+//                drawerLayout.open()
+//
+//                navigationView.setNavigationItemSelectedListener { menuItem ->
+//                    // Handle menu item selected
+//                    menuItem.isChecked = true
+//                    drawerLayout.close()
+//                    true
+//                }
             }
 
         findViewById<Button>(R.id.python_button).setOnClickListener {
@@ -129,6 +161,20 @@ class MainActivity : AppCompatActivity() {
 
 
 }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+            return true
+        } else {
+            when (item.itemId) {
+                R.id.change_page -> {
+                    Log.d("NAV", "Menu, Tried to nav to other activity")
+                    return true
+                }
+                else -> { return super.onOptionsItemSelected(item)}
+            }
+        }
+    }
 
     private fun copyAssets() { //newnewnew need to fix
         Log.d("ASSETS", "start copyassets run")
