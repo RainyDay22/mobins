@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.travel_button)
             .setOnClickListener {
-                val travelIntent = Intent(this@MainActivity, NavActivity::class.java)//PageActivity::class.java)
+                val travelIntent = Intent(this@MainActivity, PageActivity::class.java)//PageActivity::class.java)
                 startActivity(travelIntent)
                 Log.d("NAV", "Tried to nav to other activity")
 
@@ -169,7 +169,7 @@ class MainActivity : AppCompatActivity() {
         when (menuItem.itemId) {
             R.id.item1 -> {
                 Toast.makeText(this, "Home selected", Toast.LENGTH_SHORT).show()
-                val travelIntent = Intent(this@MainActivity, NavActivity::class.java)//PageActivity::class.java)
+                val travelIntent = Intent(this@MainActivity, PageActivity::class.java)//PageActivity::class.java)
                 startActivity(travelIntent)
                 Log.d("NAV", "Tried to nav to other activity")
             }

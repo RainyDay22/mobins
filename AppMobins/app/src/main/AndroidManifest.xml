@@ -24,9 +24,9 @@
             </intent-filter>
         </activity>
         <activity
-        android:name="PageActivity" />
-        <activity
-            android:name="NavActivity" />
+            android:name="PageActivity" />
+<!--        <activity-->
+<!--            android:name="NavActivity" />-->
 
     </application>
 
