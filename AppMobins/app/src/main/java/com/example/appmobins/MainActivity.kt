@@ -7,18 +7,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.chaquo.python.PyException
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
-import java.io.BufferedReader
+import com.google.android.material.navigation.NavigationView
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -47,11 +50,13 @@ class GlobalVars : Application() {
 
 class MainActivity : AppCompatActivity() {
 
-    var dataList= mutableListOf<String>("line 1")
+    var dataList = mutableListOf<String>("line 1")
 
-    private lateinit var recyclerView:RecyclerView
-    private lateinit var c_adapter:CustomAdapter
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var c_adapter: CustomAdapter
 
+    lateinit var drawerLayout: DrawerLayout //menu ip, needed import
+    lateinit var actionBarDrawerToggle: ActionBarDrawerToggle //menu ip, needed import
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,11 +66,11 @@ class MainActivity : AppCompatActivity() {
         val gVal = GlobalVars.getGlobalVarValue()
 
         //simulated output/program to run
-        dataList= mutableListOf<String>("line 1", gVal!!)
+        dataList = mutableListOf<String>("line 1", gVal!!)
         var dataArray = dataList.toTypedArray()
 
         //setting up python
-        if (! Python.isStarted()) {
+        if (!Python.isStarted()) {
             Python.start(AndroidPlatform(this))
         }
         val py = Python.getInstance()
@@ -77,6 +82,27 @@ class MainActivity : AppCompatActivity() {
         Log.d("ASSETS", "copyAssets finished running")
 
 
+        //menu ip
+        // drawer layout instance to toggle the menu icon to open
+        // drawer and back button to close drawer
+        drawerLayout = findViewById(R.id.drawerLayout)
+        actionBarDrawerToggle =
+            ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close)
+
+        // pass the Open and Close toggle for the drawer layout listener
+        // to toggle the button
+        drawerLayout.addDrawerListener(actionBarDrawerToggle)
+        actionBarDrawerToggle.syncState()
+
+        // to make the Navigation drawer icon always appear on the action bar
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        // Set up NavigationView
+        val navigationView: NavigationView = findViewById(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            handleNavigationItem(menuItem)
+            true
+        }
         //scroll init
         recyclerView = findViewById(R.id.recycler_view)
         c_adapter = CustomAdapter(dataArray)
@@ -90,7 +116,8 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.travel_button)
             .setOnClickListener {
-                val travelIntent = Intent(this@MainActivity, PageActivity::class.java)
+                val travelIntent =
+                    Intent(this@MainActivity, PageActivity::class.java)//PageActivity::class.java)
                 startActivity(travelIntent)
                 Log.d("NAV", "Tried to nav to other activity")
 
@@ -133,7 +160,7 @@ class MainActivity : AppCompatActivity() {
                 try {
                     val pystr = module.callAttr("main") //function call w arg
                     output(pystr.toJava(String::class.java))
-                    } catch (e: PyException) {
+                } catch (e: PyException) {
 
                     output("Error: ${e.message}") //pykot
                 }
@@ -144,11 +171,38 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun output(text:String?) {
+    fun output(text: String?) {
         runOnUiThread {
             c_adapter.addItems(listOf(text!!))
             Log.d("output", "output function")
         }
+    }
+
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean { //menu
+        return if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+            true
+        } else super.onOptionsItemSelected(item)
+    }
+
+    private fun handleNavigationItem(menuItem: MenuItem) { //menu
+        when (menuItem.itemId) {
+            R.id.item1 -> {
+                Toast.makeText(this, "Home selected", Toast.LENGTH_SHORT).show()
+                val travelIntent = Intent(this@MainActivity, PageActivity::class.java)//PageActivity::class.java)
+                startActivity(travelIntent)
+                Log.d("NAV", "Tried to nav to other activity")
+            }
+            R.id.item2 -> {
+                Toast.makeText(this, "Profile selected", Toast.LENGTH_SHORT).show()
+            }
+            R.id.item3 -> {
+                Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT).show()
+            }
+        }
+        // Close the drawer after handling the click
+        drawerLayout.closeDrawers()
     }
 
     private fun copyAssets() {
