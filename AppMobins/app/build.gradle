@@ -65,7 +65,13 @@ android {
     }
 }
 
-dependencies { //mostly un-updated from chaquopy console
+dependencies {
+    implementation 'androidx.preference:preference-ktx:1.2.1'
+//mostly un-updated from chaquopy console
+
+    def fragment_version = "1.8.5"//frag ip
+    // Kotlin
+    implementation "androidx.fragment:fragment-ktx:$fragment_version"//frag ip
 
     //from chaquo console
     implementation fileTree(dir: 'libs', include: ['*.jar'])

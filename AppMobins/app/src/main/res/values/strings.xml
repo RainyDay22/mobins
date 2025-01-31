@@ -2,4 +2,22 @@
     <string name="app_name">AppMobins</string>
     <string name="nav_open">open menu</string>
     <string name="nav_close">close menu</string>
+
+    <string-array name="standard_options">
+<!--        this is what is displayed-->
+        <item>item 1</item>
+        <item>item 2</item>
+        <item>item 3</item>
+        <item>item 4</item>
+        <item>item 5</item>
+    </string-array>
+
+    <string-array name="standard_values">
+<!--        this is what the program will receive-->
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
 </resources>

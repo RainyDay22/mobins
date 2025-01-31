@@ -37,17 +37,8 @@
                     android:id="@+id/run_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Print a line"
+                    android:text="Print"
                     app:layout_constraintTop_toBottomOf="@id/space"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-
-                <Button
-                    android:id="@+id/travel_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Change Page"
-                    app:layout_constraintTop_toBottomOf="@id/run_button"
                     app:layout_constraintStart_toStartOf="parent" />
 
 
@@ -56,17 +47,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Clear"
-                    app:layout_constraintTop_toBottomOf="@id/travel_button"
-                    app:layout_constraintStart_toStartOf="parent" />
-
+                    app:layout_constraintTop_toBottomOf="@id/space"
+                    app:layout_constraintStart_toEndOf="@id/run_button" />
 
                 <Button
-                    android:id="@+id/Stop_button"
+                    android:id="@+id/travel_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Stop"
-                    app:layout_constraintTop_toBottomOf="@id/clear_button"
-                    app:layout_constraintStart_toStartOf="parent"/>
+                    android:text="Change Page"
+                    app:layout_constraintTop_toBottomOf="@id/space"
+                    app:layout_constraintStart_toEndOf="@id/clear_button" />
 
 
                 <Button
@@ -74,8 +64,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Run Python"
-                    app:layout_constraintTop_toBottomOf="@id/Stop_button"
+                    app:layout_constraintTop_toBottomOf="@id/clear_button"
                     app:layout_constraintStart_toStartOf="parent"/>
+
+                <Button
+                    android:id="@+id/Stop_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stop"
+                    app:layout_constraintTop_toBottomOf="@id/clear_button"
+                    app:layout_constraintStart_toEndOf="@id/python_button"/>
 
 
                 <FrameLayout

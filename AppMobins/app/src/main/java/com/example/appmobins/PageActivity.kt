@@ -7,9 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceFragmentCompat
 
 
 class PageActivity : AppCompatActivity() {
@@ -45,7 +44,7 @@ class PageActivity : AppCompatActivity() {
     }
 }
 
-class PageFrag : Fragment() {
+class PageFrag : PreferenceFragmentCompat() {
 
     interface OnDataPass {
         fun onDataPass(data: String)
@@ -62,37 +61,42 @@ class PageFrag : Fragment() {
         dataPasser.onDataPass(data)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val v = inflater.inflate(R.layout.page_layout, container, false)
+//    override fun onCreateView(
+//        inflater: LayoutInflater, container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ): View {
+//        val v = inflater.inflate(R.layout.page_layout, container, false)
+//
+////        v!!.findViewById<Button>(R.id.back_button)
+////            .setOnClickListener {
+////                Log.d("NAV", "Ended new activity")
+////                requireActivity().finish()
+////            }
+////
+////        v.findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.material_switch)
+////            .setChecked(GlobalVars.getSwitchState())
+////
+////        v.findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.material_switch)
+////            .setOnCheckedChangeListener { _, isChecked ->
+////                if (isChecked) {
+////                    // The switch is checked.
+////                    Log.d("Switch", "switch toggled on")
+////                    passData("fragment dataaa")
+////                    GlobalVars.setGlobalVarValue("changed!")
+////                    Log.d("GlobalVars", GlobalVars.getGlobalVarValue()!!)
+////                } else {
+////                    // The switch isn't checked.
+////                    Log.d("Switch", "switch toggled off")
+////                    GlobalVars.setGlobalVarValue("changed back!")
+////                    Log.d("GlobalVars", GlobalVars.getGlobalVarValue()!!)
+////                }
+////                GlobalVars.setSwitchState(isChecked)
+////            }
+//        return v
+//    }
 
-        v!!.findViewById<Button>(R.id.back_button)
-            .setOnClickListener {
-                Log.d("NAV", "Ended new activity")
-                requireActivity().finish()
-            }
-
-        v.findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.material_switch)
-            .setChecked(GlobalVars.getSwitchState())
-
-        v.findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.material_switch)
-            .setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    // The switch is checked.
-                    Log.d("Switch", "switch toggled on")
-                    passData("fragment dataaa")
-                    GlobalVars.setGlobalVarValue("changed!")
-                    Log.d("GlobalVars", GlobalVars.getGlobalVarValue()!!)
-                } else {
-                    // The switch isn't checked.
-                    Log.d("Switch", "switch toggled off")
-                    GlobalVars.setGlobalVarValue("changed back!")
-                    Log.d("GlobalVars", GlobalVars.getGlobalVarValue()!!)
-                }
-                GlobalVars.setSwitchState(isChecked)
-            }
-        return v
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        addPreferencesFromResource(R.xml.preferences)
     }
+
 }
