@@ -1,5 +1,6 @@
 package com.example.appmobins
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -46,6 +47,21 @@ class PageActivity : AppCompatActivity() {
 
 class PageFrag : Fragment() {
 
+    interface OnDataPass {
+        fun onDataPass(data: String)
+    }
+
+    lateinit var dataPasser: OnDataPass
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        dataPasser = context as OnDataPass
+    }
+
+    fun passData(data: String){
+        dataPasser.onDataPass(data)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -66,6 +82,7 @@ class PageFrag : Fragment() {
                 if (isChecked) {
                     // The switch is checked.
                     Log.d("Switch", "switch toggled on")
+                    passData("fragment dataaa")
                     GlobalVars.setGlobalVarValue("changed!")
                     Log.d("GlobalVars", GlobalVars.getGlobalVarValue()!!)
                 } else {

@@ -50,7 +50,7 @@ class GlobalVars : Application() {
     }
 }
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), PageFrag.OnDataPass {
 
     var dataList = mutableListOf<String>("line 1")
 
@@ -180,7 +180,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
+    override fun onDataPass(data: String) { //fragment info pass
+        Log.d("LOG","hello " + data)
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean { //menu
         return if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
