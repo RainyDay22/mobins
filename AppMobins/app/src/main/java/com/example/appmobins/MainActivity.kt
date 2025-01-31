@@ -16,6 +16,8 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.recyclerview.widget.RecyclerView
 import com.chaquo.python.PyException
 import com.chaquo.python.PyObject
@@ -189,10 +191,11 @@ class MainActivity : AppCompatActivity() {
     private fun handleNavigationItem(menuItem: MenuItem) { //menu
         when (menuItem.itemId) {
             R.id.item1 -> {
-                Toast.makeText(this, "Home selected", Toast.LENGTH_SHORT).show()
-                val travelIntent = Intent(this@MainActivity, PageActivity::class.java)//PageActivity::class.java)
-                startActivity(travelIntent)
-                Log.d("NAV", "Tried to nav to other activity")
+                loadFragment(PageFrag())
+//                Toast.makeText(this, "Home selected", Toast.LENGTH_SHORT).show()
+//                val travelIntent = Intent(this@MainActivity, PageActivity::class.java)//PageActivity::class.java)
+//                startActivity(travelIntent)
+//                Log.d("NAV", "Tried to nav to other activity")
             }
             R.id.item2 -> {
                 Toast.makeText(this, "Profile selected", Toast.LENGTH_SHORT).show()
@@ -203,6 +206,14 @@ class MainActivity : AppCompatActivity() {
         }
         // Close the drawer after handling the click
         drawerLayout.closeDrawers()
+    }
+
+    private fun loadFragment(fragment: Fragment){
+        supportFragmentManager.commit {
+            replace(R.id.main_frag_frame, fragment)
+            setReorderingAllowed(true)
+            addToBackStack("name") // Name can be null
+        }
     }
 
     private fun copyAssets() {

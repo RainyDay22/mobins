@@ -14,89 +14,93 @@
         android:fitsSystemWindows="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"> <!--unclear if correct-->
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraint_layout"
+        <FrameLayout
+            android:id="@+id/main_frag_frame"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
-
-            <Space
-                android:id="@+id/space"
-                android:layout_width="match_parent"
-                android:layout_height="40.dp"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="16dp"
-                />
-
-            <Button
-                android:id="@+id/run_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Print a line"
-                app:layout_constraintTop_toBottomOf="@id/space"
-                app:layout_constraintStart_toStartOf="parent" />
-
-
-            <Button
-                android:id="@+id/travel_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Change Page"
-                app:layout_constraintTop_toBottomOf="@id/run_button"
-                app:layout_constraintStart_toStartOf="parent" />
-
-
-            <Button
-                android:id="@+id/clear_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Clear"
-                app:layout_constraintTop_toBottomOf="@id/travel_button"
-                app:layout_constraintStart_toStartOf="parent" />
-
-
-            <Button
-                android:id="@+id/Stop_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Stop"
-                app:layout_constraintTop_toBottomOf="@id/clear_button"
-                app:layout_constraintStart_toStartOf="parent"/>
-
-
-            <Button
-                android:id="@+id/python_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Run Python"
-                app:layout_constraintTop_toBottomOf="@id/Stop_button"
-                app:layout_constraintStart_toStartOf="parent"/>
-
-
-            <FrameLayout
+            android:layout_height="match_parent"
+        >
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/python_button"
-                app:layout_constrainedHeight="true"
                 >
 
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view"
+                <Space
+                    android:id="@+id/space"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scrollbars="vertical"
-                    app:layoutManager="LinearLayoutManager"
+                    android:layout_height="40.dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_editor_absoluteX="16dp"
                     />
 
+                <Button
+                    android:id="@+id/run_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Print a line"
+                    app:layout_constraintTop_toBottomOf="@id/space"
+                    app:layout_constraintStart_toStartOf="parent" />
 
-            </FrameLayout>
+
+                <Button
+                    android:id="@+id/travel_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Change Page"
+                    app:layout_constraintTop_toBottomOf="@id/run_button"
+                    app:layout_constraintStart_toStartOf="parent" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <Button
+                    android:id="@+id/clear_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clear"
+                    app:layout_constraintTop_toBottomOf="@id/travel_button"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+                <Button
+                    android:id="@+id/Stop_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stop"
+                    app:layout_constraintTop_toBottomOf="@id/clear_button"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+
+                <Button
+                    android:id="@+id/python_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Run Python"
+                    app:layout_constraintTop_toBottomOf="@id/Stop_button"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/python_button"
+                    app:layout_constrainedHeight="true"
+                    >
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scrollbars="vertical"
+                        app:layoutManager="LinearLayoutManager"
+                        />
+
+
+                </FrameLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </FrameLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
