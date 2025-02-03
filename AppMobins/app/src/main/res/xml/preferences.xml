@@ -36,14 +36,6 @@
             android:summary="Description of what the switch does"
             android:title="Switch title" />
 
-        <EditTextPreference
-            android:id="@+id/editText"
-            app:key="edit_text_preference"
-            app:defaultValue="Default value"
-            app:title="EditTextPreference"
-            app:useSimpleSummaryProvider="true"/>
-
-
     </PreferenceCategory>
 
 </PreferenceScreen>

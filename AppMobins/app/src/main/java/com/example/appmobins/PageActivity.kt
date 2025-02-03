@@ -3,10 +3,10 @@ package com.example.appmobins
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
 
@@ -40,6 +40,37 @@ class PageActivity : AppCompatActivity() {
             }
                 GlobalVars.setSwitchState(isChecked)
             }
+
+
+        var saved_text = "type here"
+        val edit_text = findViewById<EditText>(R.id.etx_box)
+        edit_text.setHint(saved_text)
+        edit_text.setOnClickListener{
+            edit_text.isCursorVisible=true
+        }
+
+        findViewById<Button>(R.id.etx_submit)
+            .setOnClickListener {
+                saved_text=edit_text.getText().toString()
+                edit_text.isCursorVisible = false
+                this.currentFocus?.let { view ->
+                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                    imm?.hideSoftInputFromWindow(view.windowToken, 0)
+                }
+                Toast.makeText(getApplicationContext(), saved_text, Toast.LENGTH_LONG).show();//display the text that you entered in edit text
+            }
+
+        findViewById<Button>(R.id.etx_cancel)
+            .setOnClickListener {
+                edit_text.isCursorVisible = false
+                this.currentFocus?.let { view ->
+                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                    imm?.hideSoftInputFromWindow(view.windowToken, 0)
+                }
+                edit_text.setText(saved_text)
+                Toast.makeText(getApplicationContext(), saved_text, Toast.LENGTH_LONG).show();//display the text that you entered in edit text
+            }
+
 
     }
 }
