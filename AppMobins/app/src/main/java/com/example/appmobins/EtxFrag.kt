@@ -16,9 +16,15 @@ class EtxFrag : Fragment() {
 
     interface OnDataPass {
         fun onDataPass(data: String)
+        fun onFragDestroyed()
     }
 
     lateinit var dataPasser: OnDataPass
+
+    override fun onDestroyView(){
+        dataPasser.onFragDestroyed()
+        super.onDestroyView()
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

@@ -13,12 +13,12 @@
             <!--   color of   ???  -->
         <item name="colorOnPrimary">@color/white</item>
             <!--  color of text on button background   -->
-        <item name="preferenceTheme">@style/preference</item>
-<!--        ^^ white background-->
+<!--        <item name="preferenceTheme">@style/preference</item>-->
+<!--        ^^ white background for pref-->
     </style>
 
-    <style name="preference" parent="Theme.AppCompat">
-        <item name="android:background">@color/white</item>
-    </style>
-<!--    ^^ white background -->
+<!--    <style name="preference" parent="Theme.AppCompat">-->
+<!--        <item name="android:background">@color/white</item>-->
+<!--    </style>-->
+<!--    ^^ white background for pref -->
 </resources>

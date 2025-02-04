@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -50,7 +51,7 @@ class GlobalVars : Application() {
     }
 }
 
-class MainActivity : AppCompatActivity(), PageFrag.OnDataPass {
+class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPass {
 
     var dataList = mutableListOf<String>("line 1")
 
@@ -184,6 +185,14 @@ class MainActivity : AppCompatActivity(), PageFrag.OnDataPass {
         Log.d("LOG","hello " + data)
     }
 
+    override fun onFragDestroyed(){
+
+        val to_restore = findViewById<FrameLayout>(R.id.main_frame)
+
+        if (to_restore.getVisibility() != View.VISIBLE)
+            to_restore.setVisibility(View.VISIBLE)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean { //menu
         return if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
             true
@@ -193,11 +202,24 @@ class MainActivity : AppCompatActivity(), PageFrag.OnDataPass {
     private fun handleNavigationItem(menuItem: MenuItem) { //menu
         when (menuItem.itemId) {
             R.id.item1 -> {
-                loadFragment(PageFrag())
-//                Toast.makeText(this, "Home selected", Toast.LENGTH_SHORT).show()
-//                val travelIntent = Intent(this@MainActivity, PageActivity::class.java)//PageActivity::class.java)
-//                startActivity(travelIntent)
-//                Log.d("NAV", "Tried to nav to other activity")
+                findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
+//                replaceFragment(EtxFrag()) // must do this for the first fragment
+//                Log.d("frag","replace worked")
+
+                supportFragmentManager.commit {
+                    add(R.id.fragment_holder, EtxFrag())
+                    setReorderingAllowed(true) //not sure why this is needed
+                    addToBackStack("Fragment #"+2) // Name can be null
+
+                    add(R.id.fragment_holder, PrefFrag())
+                    setReorderingAllowed(true) //not sure why this is needed
+                    addToBackStack("Fragment #"+3) // Name can be null
+
+                    add(R.id.fragment_holder, EtxFrag())
+                    setReorderingAllowed(true) //not sure why this is needed
+                    addToBackStack("Fragment #"+4) // Name can be null
+                }
+
             }
             R.id.item2 -> {
                 Toast.makeText(this, "Profile selected", Toast.LENGTH_SHORT).show()
@@ -210,13 +232,14 @@ class MainActivity : AppCompatActivity(), PageFrag.OnDataPass {
         drawerLayout.closeDrawers()
     }
 
-    private fun loadFragment(fragment: Fragment){
+    private fun replaceFragment(fragment: Fragment){
         supportFragmentManager.commit {
-            replace(R.id.main_frag_frame, fragment)
-            setReorderingAllowed(true)
-            addToBackStack("name") // Name can be null
+            replace(R.id.main_frame, fragment)
+            setReorderingAllowed(true) //not sure why this is needed
+            addToBackStack("1st frag") // Name can be null
         }
     }
+
 
     private fun copyAssets() {
         Log.d("ASSETS", "start copyassets run")
