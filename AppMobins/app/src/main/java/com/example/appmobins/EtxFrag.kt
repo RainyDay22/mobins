@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment
 class EtxFrag : Fragment() {
 
     interface OnDataPass {
-        fun onDataPass(data: String)
+        fun onDataPass(data: Pair<String, String>)
         fun onFragDestroyed()
     }
 
@@ -31,7 +31,7 @@ class EtxFrag : Fragment() {
         dataPasser = context as OnDataPass
     }
 
-    fun passData(data: String){
+    fun passData(data: Pair<String,String>){
         dataPasser.onDataPass(data)
     }
 
@@ -51,9 +51,11 @@ class EtxFrag : Fragment() {
         val activity = getActivity()
         v.findViewById<Button>(R.id.etx_submit)
             .setOnClickListener {
-                saved_text=edit_text.getText().toString()
 
-                passData(saved_text) //trial
+                if(saved_text!=edit_text.getText().toString()) {
+                    saved_text = edit_text.getText().toString()
+                    passData(Pair("log_cut_size",saved_text))
+                }
 
                 edit_text.isCursorVisible = false
                 activity?.getCurrentFocus()?.let { view ->

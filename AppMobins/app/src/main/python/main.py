@@ -63,6 +63,7 @@ def main():
         sys.stderr = AndroidStream(activity)
 
         print("=========start main=========") #std testing
+        print(activity.access_log_size(),"***", activity.access_log_type())
 
         # pykot_test() #tested sequential printing
 
@@ -75,9 +76,18 @@ def main():
         #log file name to be diaglog_yyyymmdd_hhmmss.mi2log
         log_name = "diaglog_"+date_time+".mi2log"
         log_file_path = os.path.join(log_dir, log_name) #mi2log attempt
-        src.save_log_as(log_file_path) #mi2log attempt
-    # #removed all specific log_enable mentions
-        src.enable_log_all()
+        src.save_log_as(log_file_path)
+
+        src.set_log_cut_size(activity.access_log_size()/1000) #convert kilobytes to megabytes
+
+        if activity.access_log_type() == "All":
+            src.enable_log_all()
+        else:
+            src.enable_log(activity.access_log_type())
+    # # #removed all specific log_enable mentions
+    #     src.enable_log_all()
+
+
     # loggingAnalyzer = LoggingAnalyzer(plugin_config)
     # loggingAnalyzer.set_source(src)
         src.run()

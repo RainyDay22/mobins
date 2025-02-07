@@ -5,11 +5,15 @@
 
     <string-array name="standard_options">
 <!--        this is what is displayed-->
-        <item>item 1</item>
-        <item>item 2</item>
-        <item>item 3</item>
-        <item>item 4</item>
-        <item>item 5</item>
+        <item>5G Control Plane</item>
+        <item>LTE Control Plane</item>
+        <item>LTE PHY</item>
+        <item>LTE Control/PHY</item>
+        <item>LTE Control/Data Plane</item>
+        <item>LTE Control/Data/PHY</item>
+        <item>LTE/3G Control Plane</item>
+        <item>All</item>
+
     </string-array>
 
     <string-array name="standard_values">
@@ -19,5 +23,8 @@
         <item>3</item>
         <item>4</item>
         <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
     </string-array>
 </resources>

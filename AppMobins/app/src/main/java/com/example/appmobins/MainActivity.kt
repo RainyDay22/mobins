@@ -39,9 +39,7 @@ class GlobalVars : Application() {
         fun getGlobalVarValue(): String? {
             return mGlobalVarValue
         }
-
         fun getSwitchState(): Boolean{return switchState}
-
         fun setGlobalVarValue(str: String?) {
             mGlobalVarValue = str
         }
@@ -60,6 +58,10 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
 
     lateinit var drawerLayout: DrawerLayout //menu ip, needed import
     lateinit var actionBarDrawerToggle: ActionBarDrawerToggle //menu ip, needed import
+
+    var log_cut_size: Double = 500.0 //in kilobytes, settings
+    var log_type: String = "All" //default value
+    var log_single: Boolean = false //default value, dangling in old app
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -174,6 +176,14 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
 
     }
 
+    fun access_log_size():Double{ //python accessor for settings
+        return log_cut_size
+    }
+
+    fun access_log_type():String{ //python accessor for settings
+        return log_type
+    }
+
     fun output(text: String?) {
         runOnUiThread {
             c_adapter.addItems(listOf(text!!))
@@ -181,8 +191,16 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
         }
     }
 
-    override fun onDataPass(data: String) { //fragment info pass
-        Log.d("LOG","hello " + data)
+    override fun onDataPass(data: Pair<String, String>) { //fragment info pass
+        Log.d("pass","hello " + data)
+
+        when (data.first){
+            "log_cut_size"-> log_cut_size=(data.second).toDouble()
+            "log_type"-> log_type=data.second
+            "log_single"-> log_single=(data.second).toBoolean()
+            else -> Toast.makeText(getApplicationContext(), "Settings datapass error", Toast.LENGTH_LONG).show()
+        }
+
     }
 
     override fun onFragDestroyed(){
@@ -207,9 +225,6 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
 //                Log.d("frag","replace worked")
 
                 supportFragmentManager.commit {
-                    add(R.id.fragment_holder, EtxFrag())
-                    setReorderingAllowed(true) //not sure why this is needed
-                    addToBackStack("Fragment #"+2) // Name can be null
 
                     add(R.id.fragment_holder, PrefFrag())
                     setReorderingAllowed(true) //not sure why this is needed
@@ -225,7 +240,8 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
                 Toast.makeText(this, "Profile selected", Toast.LENGTH_SHORT).show()
             }
             R.id.item3 -> {
-                Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT).show()
+                for (i in 1..supportFragmentManager.getBackStackEntryCount())
+                {supportFragmentManager.popBackStack()}
             }
         }
         // Close the drawer after handling the click
