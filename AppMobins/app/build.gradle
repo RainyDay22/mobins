@@ -67,6 +67,10 @@ android {
 
 dependencies {
     implementation 'androidx.preference:preference-ktx:1.2.1'
+
+    implementation 'com.github.Fox2Code.AndroidANSI:library:1.2.0' //ansi color changing
+    // You can also add the ktx module for the kotlin extension. https://github.com/Fox2Code/AndroidANSI
+    // implementation 'com.github.Fox2Code.AndroidANSI:library-ktx:1.2.0' //ansi color changing
 //mostly un-updated from chaquopy console
 
     def fragment_version = "1.8.5"//frag ip

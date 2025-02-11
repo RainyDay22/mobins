@@ -53,6 +53,28 @@ class AndroidStream: ###pykot
         pass  # No-op to satisfy the file-like interface
 
 
+def format_logtype(UIinput):
+    formatted = []
+
+    if UIinput == "5G Control Plane":
+        formatted = nr_lvl1 + lte_lvl1
+    elif UIinput == "LTE Control Plane":
+        formatted = lte_lvl1
+    elif UIinput == "LTE PHY":
+        formatted = lte_lvl3
+    elif UIinput == "LTE Control/Data Plane":
+        formatted =lte_lvl1 + lte_lvl2
+    elif UIinput == "LTE Control/PHY":
+        formatted = lte_lvl1 + lte_lvl3
+    elif UIinput == "LTE Control/Data/PHY":
+        formatted =lte_lvl1 + lte_lvl2 + lte_lvl3
+    elif UIinput == "LTE/3G Control Plane":
+        formatted =lte_lvl1 + wcdma + umts
+    else:
+        print("Incorrect log type: ", UIinput, file=sys.stderr)
+
+    return formatted
+
 def main():
     global ret_val
     global src
@@ -63,7 +85,7 @@ def main():
         sys.stderr = AndroidStream(activity)
 
         print("=========start main=========") #std testing
-        print(activity.access_log_size(),"***", activity.access_log_type())
+        print(type(activity.access_log_size()),"***", activity.access_log_type())
 
         # pykot_test() #tested sequential printing
 
@@ -83,7 +105,8 @@ def main():
         if activity.access_log_type() == "All":
             src.enable_log_all()
         else:
-            src.enable_log(activity.access_log_type())
+            log_list = format_logtype(activity.access_log_type())
+            src.enable_log(log_list)
     # # #removed all specific log_enable mentions
     #     src.enable_log_all()
 
@@ -96,3 +119,45 @@ def main():
         ret_val= traceback.format_exc()
 
     return ret_val
+
+nr_lvl1 = [
+    '5G_NR_RRC_OTA_Packet',
+]
+
+lte_lvl1 = [
+    'LTE_RRC_OTA_Packet',
+    'LTE_RRC_Serv_Cell_Info',
+    'LTE_RRC_MIB_Packet',
+    'LTE_RRC_MIB_Message_Log_Packet',
+    'LTE_NAS_ESM_State',
+    'LTE_NAS_ESM_OTA_Incoming_Packet',
+    'LTE_NAS_ESM_OTA_Outgoing_Packet',
+    'LTE_NAS_EMM_State',
+    'LTE_NAS_EMM_OTA_Incoming_Packet',
+    'LTE_NAS_EMM_OTA_Outgoing_Packet',
+]
+lte_lvl2 = [
+    'LTE_RLC_UL_Config_Log_Packet',
+    'LTE_RLC_DL_Config_Log_Packet',
+    'LTE_RLC_UL_AM_All_PDU',
+    'LTE_RLC_DL_AM_All_PDU',
+    'LTE_MAC_UL_Transport_Block',
+    'LTE_MAC_DL_Transport_Block',
+]
+lte_lvl3 = [
+    'LTE_PHY_PDSCH_Packet',
+    # 'LTE_PHY_Serv_Cell_Measurement',
+    'LTE_PHY_Connected_Mode_Intra_Freq_Meas',
+    'LTE_PHY_Connected_Mode_Neighbor_Measurement',
+    'LTE_PHY_Inter_RAT_Measurement'
+]
+wcdma = [
+    'WCDMA_RRC_OTA_Packet',
+    'WCDMA_RRC_Serv_Cell_Info',
+]
+umts = [
+    'UMTS_NAS_OTA_Packet',
+    'UMTS_NAS_GMM_State',
+    'UMTS_NAS_MM_State',
+    'UMTS_NAS_MM_REG_State',
+]

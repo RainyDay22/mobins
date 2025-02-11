@@ -17,13 +17,13 @@
             title is use to add title to our list preferences.-->
         <!--this list preference is for remind me option-->
         <ListPreference
-            android:defaultValue="8"
+            android:defaultValue="All"
             android:dialogTitle="Choose Log Type"
             android:entries="@array/standard_options"
-            android:entryValues="@array/standard_values"
+            android:entryValues="@array/standard_options"
             android:key="list_preference"
             app:useSimpleSummaryProvider="true"
-            android:title="Log Type" />
+            android:title="Log Type"/>
 
         <!--on below line we are creating a switch preference
             default value is use to set switch on or off
@@ -35,6 +35,12 @@
             android:key="switch_preference"
             android:summary="Merge all logs before uploading to server"
             android:title="Single Log" />
+
+        <EditTextPreference
+            app:key="edit_text_preference"
+            app:defaultValue="500"
+            app:title="Log Size (KB)"
+            app:useSimpleSummaryProvider="true"/>
 
     </PreferenceCategory>
 

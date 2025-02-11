@@ -4,6 +4,7 @@ package com.example.appmobins
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,17 +20,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chaquo.python.PyException
-import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import com.fox2code.androidansi.AnsiParser
 import com.google.android.material.navigation.NavigationView
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.io.InputStreamReader
 import java.io.OutputStream
 
 class GlobalVars : Application() {
@@ -59,13 +60,18 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
     lateinit var drawerLayout: DrawerLayout //menu ip, needed import
     lateinit var actionBarDrawerToggle: ActionBarDrawerToggle //menu ip, needed import
 
-    var log_cut_size: Double = 500.0 //in kilobytes, settings
-    var log_type: String = "All" //default value
-    var log_single: Boolean = false //default value, dangling in old app
+    lateinit var sharedPreferences: SharedPreferences
+
+//    var log_cut_size: Double = 500.0 //in kilobytes, settings
+//    var log_type: String = "All" //default value
+//    var log_single: Boolean = false //default value, dangling in old app
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_layout)
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
 
         GlobalVars.setGlobalVarValue("wow")
         val gVal = GlobalVars.getGlobalVarValue()
@@ -82,9 +88,10 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
         val module = py.getModule("main")
         module.put("activity", this)
 
-        //copy assets over
-        copyAssets()
-        Log.d("ASSETS", "copyAssets finished running")
+        //copy assets over, reactivate later TODO
+//        copyAssets()
+//        Log.d("ASSETS", "copyAssets finished running")
+
 
 
         //menu ip
@@ -115,8 +122,10 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
 
         findViewById<Button>(R.id.run_button)
             .setOnClickListener {
-                Log.d("BUTTONS", "User tapped the Runbutton")
-                output(GlobalVars.getGlobalVarValue()!!)
+//                Log.d("BUTTONS", "User tapped the Runbutton")
+                output(GlobalVars.getGlobalVarValue()!!
+                        + ( sharedPreferences.all).toString() //just for debugging the preferences
+                )
             }
 
         findViewById<Button>(R.id.travel_button)
@@ -176,15 +185,16 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
 
     }
 
-    fun access_log_size():Double{ //python accessor for settings
-        return log_cut_size
+    fun access_log_size():Float{ //python accessor for settings
+        val logSize = sharedPreferences.getString("edit_text_preference", "500")
+        return logSize!!.toFloat()
     }
 
     fun access_log_type():String{ //python accessor for settings
-        return log_type
+        return sharedPreferences.getString("list_preference","All")+""
     }
 
-    fun output(text: String?) {
+    fun output(text: String?) { //console printer, called by kotlin and python
         runOnUiThread {
             c_adapter.addItems(listOf(text!!))
             Log.d("output", "output function")
@@ -194,12 +204,12 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
     override fun onDataPass(data: Pair<String, String>) { //fragment info pass
         Log.d("pass","hello " + data)
 
-        when (data.first){
-            "log_cut_size"-> log_cut_size=(data.second).toDouble()
-            "log_type"-> log_type=data.second
-            "log_single"-> log_single=(data.second).toBoolean()
-            else -> Toast.makeText(getApplicationContext(), "Settings datapass error", Toast.LENGTH_LONG).show()
-        }
+//        when (data.first){
+//            "log_cut_size"-> log_cut_size=(data.second).toDouble()
+//            "log_type"-> log_type=data.second
+//            "log_single"-> log_single=(data.second).toBoolean()
+//            else -> Toast.makeText(getApplicationContext(), "Settings datapass error", Toast.LENGTH_LONG).show()
+//        }
 
     }
 
@@ -221,18 +231,31 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
         when (menuItem.itemId) {
             R.id.item1 -> {
                 findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
-//                replaceFragment(EtxFrag()) // must do this for the first fragment
-//                Log.d("frag","replace worked")
 
-                supportFragmentManager.commit {
+                val myPref: PrefFrag? =
+                    supportFragmentManager.findFragmentByTag("Pref") as PrefFrag?
 
-                    add(R.id.fragment_holder, PrefFrag())
-                    setReorderingAllowed(true) //not sure why this is needed
-                    addToBackStack("Fragment #"+3) // Name can be null
+//                val bstack_ind = supportFragmentManager.getBackStackEntryCount()-1 //fragment backstack debugging
+//                if(bstack_ind>=0){
+//                    val bstack_entry = supportFragmentManager.getBackStackEntryAt(bstack_ind)
+//                    val huh:Fragment? = supportFragmentManager.findFragmentByTag(bstack_entry.getName())
+//                    Log.d("froggie",
+//                        bstack_entry.getName()
+//                                +"**"
+//                                +huh.toString()
+//                                + "**"
+//                                + huh?.isVisible.toString())
+//                }
 
-                    add(R.id.fragment_holder, EtxFrag())
-                    setReorderingAllowed(true) //not sure why this is needed
-                    addToBackStack("Fragment #"+4) // Name can be null
+                if (myPref==null || !myPref.isVisible){ //avoid duplicates in frag backstack
+                    supportFragmentManager.commit {
+
+                        add(R.id.fragment_holder, PrefFrag(), "Pref") //tag of actual Fragment
+                        setReorderingAllowed(true) //not sure why this is needed
+
+                        addToBackStack("Pref") // name of backStackEntry, one entry per commit
+
+                    }
                 }
 
             }
@@ -352,7 +375,8 @@ class CustomAdapter(private var lineList: Array<String>) :
         private val lineTextView: TextView = itemView.findViewById(R.id.item_text)
 
         fun bind(word: String) {
-            lineTextView.text = word
+            AnsiParser.setAnsiText(lineTextView, word,
+            AnsiParser.FLAG_PARSE_DISABLE_SUBSCRIPT) //ansi coloring
         }
     }
 
