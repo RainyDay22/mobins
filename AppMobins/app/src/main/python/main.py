@@ -29,7 +29,7 @@ def halt_daemon():
     print("=========halt end=========")
 
 
-class AndroidStream: ###pykot
+class AndroidStream: #redirecting stdout and stderr streams to kotlin output console
 
     def __init__(self, activity):
         self.activity = activity
@@ -47,7 +47,7 @@ class AndroidStream: ###pykot
             # run_me = Run_output(self.activity)
             # self.activity.runOnUiThread(run_me) #does a weird runonUithread sandwich, works the smae as line below
 
-            self.activity.output(message) ##trial?? this just skips all the prints
+            self.activity.uiOutput(message) ##trial?? this just skips all the prints
 
     def flush(self):
         pass  # No-op to satisfy the file-like interface
@@ -87,14 +87,14 @@ def main():
         print("=========start main=========") #std testing
         print(type(activity.access_log_size()),"***", activity.access_log_type())
 
-        # pykot_test() #tested sequential printing
-
         date_time=datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
 
         src = OnlineMonitor()
         src.set_skip_decoding(False)
+
         log_dir = "/data/data/com.example.appmobins/files"  #hardcoded
         src.set_log_directory(log_dir)
+
         #log file name to be diaglog_yyyymmdd_hhmmss.mi2log
         log_name = "diaglog_"+date_time+".mi2log"
         log_file_path = os.path.join(log_dir, log_name) #mi2log attempt
@@ -107,8 +107,6 @@ def main():
         else:
             log_list = format_logtype(activity.access_log_type())
             src.enable_log(log_list)
-    # # #removed all specific log_enable mentions
-    #     src.enable_log_all()
 
 
     # loggingAnalyzer = LoggingAnalyzer(plugin_config)

@@ -12,7 +12,7 @@
         android:checkable="true"/>
     <item
         android:id="@+id/item3"
-        android:icon="@drawable/baseline_settings_24"
+        android:icon="@drawable/baseline_home_24"
         android:title="Home Page"
         android:checkable="true"/>
 </menu>

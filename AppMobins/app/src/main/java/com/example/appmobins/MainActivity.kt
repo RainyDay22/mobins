@@ -52,7 +52,7 @@ class GlobalVars : Application() {
 
 class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPass {
 
-    var dataList = mutableListOf<String>("line 1")
+    var dataList = mutableListOf<String>("line 1") //for debugging
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var c_adapter: CustomAdapter
@@ -61,24 +61,20 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
     lateinit var actionBarDrawerToggle: ActionBarDrawerToggle //menu ip, needed import
 
     lateinit var sharedPreferences: SharedPreferences
+    var installMode : Boolean = true //flag is true if the app is run for the first time, flag for install mode
 
-//    var log_cut_size: Double = 500.0 //in kilobytes, settings
-//    var log_type: String = "All" //default value
-//    var log_single: Boolean = false //default value, dangling in old app
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_layout)
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)//persistent data
 
-
-        GlobalVars.setGlobalVarValue("wow")
-        val gVal = GlobalVars.getGlobalVarValue()
+        GlobalVars.setGlobalVarValue("wow") //vestigial
+        val gVal = GlobalVars.getGlobalVarValue() //vestigial
 
         //simulated output/program to run
-        dataList = mutableListOf<String>("line 1", gVal!!)
-        var dataArray = dataList.toTypedArray()
+        dataList = mutableListOf<String>("line 1", gVal!!) //debug
 
         //setting up python
         if (!Python.isStarted()) {
@@ -88,13 +84,21 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
         val module = py.getModule("main")
         module.put("activity", this)
 
-        //copy assets over, reactivate later TODO
-//        copyAssets()
-//        Log.d("ASSETS", "copyAssets finished running")
+        //copy assets over, only run on installation aka not normalRun aka first run
+        //assets are c and wireshark packages
+        var settings:SharedPreferences= getSharedPreferences("PREFS_NAME", 0)
+        installMode = settings.getBoolean("FIRST_RUN", true)
+        if (installMode) {
+            copyAssets()
+            Log.d("ASSETS", "copyAssets finished running")
+
+            val spEditor:SharedPreferences.Editor = settings.edit()
+            spEditor.putBoolean("FIRST_RUN", false)
+            spEditor.apply()
+        }
 
 
-
-        //menu ip
+        //menu
         // drawer layout instance to toggle the menu icon to open
         // drawer and back button to close drawer
         drawerLayout = findViewById(R.id.drawerLayout)
@@ -115,15 +119,16 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
             handleNavigationItem(menuItem)
             true
         }
-        //scroll init
+
+
+        //console init
         recyclerView = findViewById(R.id.recycler_view)
-        c_adapter = CustomAdapter(dataArray)
+        c_adapter = CustomAdapter(dataList)
         recyclerView.adapter = c_adapter
 
         findViewById<Button>(R.id.run_button)
             .setOnClickListener {
-//                Log.d("BUTTONS", "User tapped the Runbutton")
-                output(GlobalVars.getGlobalVarValue()!!
+                uiOutput(GlobalVars.getGlobalVarValue()!!
                         + ( sharedPreferences.all).toString() //just for debugging the preferences
                 )
             }
@@ -131,7 +136,7 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
         findViewById<Button>(R.id.travel_button)
             .setOnClickListener {
                 val travelIntent =
-                    Intent(this@MainActivity, PageActivity::class.java)//PageActivity::class.java)
+                    Intent(this@MainActivity, PageActivity::class.java)
                 startActivity(travelIntent)
                 Log.d("NAV", "Tried to nav to other activity")
 
@@ -139,15 +144,8 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
 
         findViewById<Button>(R.id.clear_button)
             .setOnClickListener {
-                c_adapter.updateList(arrayOf<String>()) //overwrite list with emtpy list to display as terminal output
+                c_adapter.updateList(mutableListOf<String>()) //overwrite list with emtpy list to display as terminal output
             }
-
-//        findViewById<Button>(R.id.removeLast_button)
-//            .setOnClickListener {
-//                dataList.removeLastOrNull()
-//                dataArray = dataList.toTypedArray()
-//                recyclerView.adapter = CustomAdapter(dataArray)
-//            }
 
         findViewById<Button>(R.id.Stop_button)
             .setOnClickListener {
@@ -173,48 +171,42 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
                 Log.d("MainActivity", "Thread is running...")
                 try {
                     val pystr = module.callAttr("main") //function call w arg
-                    output(pystr.toJava(String::class.java))
+                    uiOutput(pystr.toJava(String::class.java))
                 } catch (e: PyException) {
-
-                    output("Error: ${e.message}") //pykot
+                    uiOutput("Error: ${e.message}")
                 }
 
             }
-            pythread.start()  // Start the thread
+            pythread.start()
         }
 
     }
 
-    fun access_log_size():Float{ //python accessor for settings
+    fun access_log_size():Float{ //accessor for settings called by python script
         val logSize = sharedPreferences.getString("edit_text_preference", "500")
         return logSize!!.toFloat()
     }
 
-    fun access_log_type():String{ //python accessor for settings
+    fun access_log_type():String{ //accessor for settings called by python script
         return sharedPreferences.getString("list_preference","All")+""
     }
 
-    fun output(text: String?) { //console printer, called by kotlin and python
+    fun uiOutput(text: String?) { //console printer, called by kotlin and python
         runOnUiThread {
             c_adapter.addItems(listOf(text!!))
-            Log.d("output", "output function")
+            c_adapter.addItems(listOf(" "))
+            recyclerView.smoothScrollToPosition(c_adapter.getItemCount()-1)
+            c_adapter.removeLast()
         }
     }
 
     override fun onDataPass(data: Pair<String, String>) { //fragment info pass
         Log.d("pass","hello " + data)
-
-//        when (data.first){
-//            "log_cut_size"-> log_cut_size=(data.second).toDouble()
-//            "log_type"-> log_type=data.second
-//            "log_single"-> log_single=(data.second).toBoolean()
-//            else -> Toast.makeText(getApplicationContext(), "Settings datapass error", Toast.LENGTH_LONG).show()
-//        }
+        //currently unused since settings info is accessed via persistent memory now
 
     }
 
-    override fun onFragDestroyed(){
-
+    override fun onFragDestroyed(){ //when pages are closed and we return to mainActivity screen
         val to_restore = findViewById<FrameLayout>(R.id.main_frame)
 
         if (to_restore.getVisibility() != View.VISIBLE)
@@ -229,7 +221,7 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
 
     private fun handleNavigationItem(menuItem: MenuItem) { //menu
         when (menuItem.itemId) {
-            R.id.item1 -> {
+            R.id.item1 -> { //settings page
                 findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
 
                 val myPref: PrefFrag? =
@@ -262,9 +254,9 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
             R.id.item2 -> {
                 Toast.makeText(this, "Profile selected", Toast.LENGTH_SHORT).show()
             }
-            R.id.item3 -> {
+            R.id.item3 -> { //back button
                 for (i in 1..supportFragmentManager.getBackStackEntryCount())
-                {supportFragmentManager.popBackStack()}
+                {supportFragmentManager.popBackStack()} //wipes fragment backstack
             }
         }
         // Close the drawer after handling the click
@@ -277,10 +269,10 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
             setReorderingAllowed(true) //not sure why this is needed
             addToBackStack("1st frag") // Name can be null
         }
-    }
+    } //vestigial
 
 
-    private fun copyAssets() {
+    private fun copyAssets() { //for copying c and wireshark onto device at install time
         Log.d("ASSETS", "start copyassets run")
 
         val assetManager =  assets //getAssets()
@@ -307,7 +299,6 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
                 out.close()
                 out = null
                 Log.d("ASSETS", "copied over $filename")
-                /////////// AHHHHHH exec permission
                 if (!outFile.canExecute()) {
                     Log.d("ASSETS_p", "File is not executable, trying to make it executable ...")
                     if (outFile.setExecutable(true, false)) {
@@ -319,8 +310,6 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
                     Log.d("ASSETS_p", "File is already executable");
                 }
 
-                //////////AHHHH
-
             } catch (e: IOException) {
                 Log.e("ASSETS", "Failed to copy asset file: $filename", e)
             }
@@ -328,7 +317,7 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
     }
 
     @Throws(IOException::class)
-    private fun copyFile(`in`: InputStream, out: OutputStream) {
+    private fun copyFile(`in`: InputStream, out: OutputStream) { //helper funciton to copyAssets
         val buffer = ByteArray(1024)
         var read: Int
         while (`in`.read(buffer).also { read = it } != -1) {
@@ -352,7 +341,7 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
             e.printStackTrace()
             Toast.makeText(this, "Failed to write data", Toast.LENGTH_SHORT).show()
         }
-    }
+    } //vestigial
 
     private fun readData(filename :String) :String{
         var text_out:String="did not read yet";
@@ -365,10 +354,10 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
             Toast.makeText(this, "Failed to read data", Toast.LENGTH_SHORT).show()
         }
         return text_out
-    }
+    } //vestigial
 }
 
-class CustomAdapter(private var lineList: Array<String>) :
+class CustomAdapter(private var lineList: MutableList<String>) : //manage console display
     RecyclerView.Adapter<CustomAdapter.ItemViewHolder>() {
 
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -400,8 +389,15 @@ class CustomAdapter(private var lineList: Array<String>) :
         notifyItemRangeInserted(startPosition, newItems.size)
     }
 
+    fun removeLast() {
+        val end_ind = lineList.size-1
+        lineList.removeAt(end_ind)
+        notifyItemRemoved(end_ind)
+        notifyItemRangeChanged(end_ind, lineList.size)
+    }
+
     // Update the list and notify the adapter
-    fun updateList(newLineList: Array<String>) {
+    fun updateList(newLineList: MutableList<String>) {
         lineList = newLineList
         notifyDataSetChanged()
     }
