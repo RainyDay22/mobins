@@ -2,6 +2,7 @@
     <string name="app_name">AppMobins</string>
     <string name="nav_open">open menu</string>
     <string name="nav_close">close menu</string>
+    <string name="file_browse">File Browser</string>
 
     <string-array name="standard_options">
 <!--        this is what is displayed-->

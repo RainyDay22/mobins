@@ -3,7 +3,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <!-- Add in TextView to display flower name   -->
     <TextView
         android:id="@+id/item_text"
         android:layout_width="wrap_content"
