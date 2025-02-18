@@ -209,8 +209,11 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
     override fun onFragDestroyed(){ //when pages are closed and we return to mainActivity screen
         val to_restore = findViewById<FrameLayout>(R.id.main_frame)
 
-        if (to_restore.getVisibility() != View.VISIBLE)
-            to_restore.setVisibility(View.VISIBLE)
+        //only make visible if all fragments are cleared
+        if (supportFragmentManager.getBackStackEntryCount()==0) {
+            if (to_restore.getVisibility() != View.VISIBLE)
+                to_restore.setVisibility(View.VISIBLE)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean { //menu
@@ -242,7 +245,7 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
                 if (myPref==null || !myPref.isVisible){ //avoid duplicates in frag backstack
                     supportFragmentManager.commit {
 
-                        add(R.id.fragment_holder, PrefFrag(), "Pref") //tag of actual Fragment
+                        replace(R.id.fragment_holder, PrefFrag(), "Pref") //tag of actual Fragment
                         setReorderingAllowed(true) //not sure why this is needed
 
                         addToBackStack("Pref") // name of backStackEntry, one entry per commit
@@ -252,7 +255,29 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
 
             }
             R.id.item2 -> {
-                Toast.makeText(this, "Profile selected", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Open File Browser", Toast.LENGTH_SHORT).show()
+                val files_dir = this.getFilesDir().getPath() //debug
+
+                findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
+
+                val myBrowse: EtxFrag? =
+                    supportFragmentManager.findFragmentByTag("Browse") as EtxFrag?
+
+                val this_browse = EtxFrag()
+                val argBundle = Bundle() //init key value pair holder
+                argBundle.putString("path", "/data/data/com.example.appmobins/") //hardcoded
+
+                this_browse.setArguments(argBundle)
+
+                if (myBrowse==null || !myBrowse.isVisible){ //avoid duplicates in frag backstack
+                    supportFragmentManager.commit {
+                        add(R.id.fragment_holder, this_browse, "Browse") //tag of actual Fragment
+                        setReorderingAllowed(true) //not sure why this is needed
+
+                        addToBackStack("Browse") // name of backStackEntry, one entry per commit
+
+                    }
+                }
             }
             R.id.item3 -> { //back button
                 for (i in 1..supportFragmentManager.getBackStackEntryCount())

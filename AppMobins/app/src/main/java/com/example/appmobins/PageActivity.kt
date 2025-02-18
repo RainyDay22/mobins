@@ -22,6 +22,7 @@ class PageActivity : AppCompatActivity() {
         // Use the current directory as title
         path = "/data/data/com.example.appmobins/"
         if (intent.hasExtra("path")) {
+            //^ recursive response to intent being called in this activity
             path = intent.getStringExtra("path")
         }
         title = path
