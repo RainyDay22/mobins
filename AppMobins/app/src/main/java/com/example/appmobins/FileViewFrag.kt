@@ -18,19 +18,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import java.io.File
 
-class EtxFrag : Fragment() {
-    private var path: String? = "/data/data/com.example.appmobins/"
+class FileViewFrag : Fragment() {
+    private var path: String = "/data/data/com.example.appmobins/"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val v = inflater.inflate(R.layout.etx_frag, container, false)
+        val v = inflater.inflate(R.layout.fileview_frag, container, false)
 
         val listView = v.findViewById<ListView>(R.id.file_list)
 
         // Use the current directory as title
-        path = getArguments()?.getString("path")
+        path = getArguments()?.getString("path").toString()
         activity?.setTitle(path)
 
         // Read all files sorted into the values-array
@@ -47,10 +47,23 @@ class EtxFrag : Fragment() {
         if (list != null) {
             for (file in list) {
                 if (!file.startsWith(".")) {
-                    values.add(file)
+                    if (file.endsWith(".mi2log")
+                        or file.endsWith(".qmdl")){ //filter for log file extension
+                        values.add(file)
+                    }
+                    else{ //handle directory
+                        //formatting filename for directory checking
+                        val filename = if (path!!.endsWith(File.separator)) {
+                            path + file } else { path + File.separator + file }
+                        //directory check
+                        if (File(filename).isDirectory){
+                            values.add(file)
+                        }
+                    }
                 }
             }
         }
+        values.add("..") //parent dir
         values.sort()
 
         // Put the data into the list
@@ -65,14 +78,23 @@ class EtxFrag : Fragment() {
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
 
             var filename = (listView.adapter).getItem(position) as String
-            filename = if (path!!.endsWith(File.separator)) {
-                path + filename
-            } else {
-                path + File.separator + filename
+
+            filename = if (filename==".."){ //handle parent
+                if(path.endsWith(File.separator)){
+                    path.substring(0,path.length-1) //remove last file separator
+                }
+                path.substring(0,path.lastIndexOf(File.separator))
+            } else{ //normal file formatting
+                if (path.endsWith(File.separator)) { //formatting
+                    path + filename
+                } else {
+                    path + File.separator + filename
+                }
             }
+
             if (File(filename).isDirectory) {
                 // make new etx, make bundle, call fragment manager
-                val thisBrowse = EtxFrag()
+                val thisBrowse = FileViewFrag()
                 val argBundle = Bundle()
                 argBundle.putString("path", filename)
 
@@ -95,7 +117,7 @@ class EtxFrag : Fragment() {
         return v
     }
 
-    interface OnDataPass {
+    interface OnDataPass { //vestigial start
         fun onDataPass(data: Pair<String, String>)
         fun onFragDestroyed()
     }
@@ -114,9 +136,9 @@ class EtxFrag : Fragment() {
 
     fun passData(data: Pair<String,String>){
         dataPasser.onDataPass(data)
-    }
+    } //vestigial end
 
-//    override fun onCreateView(
+//    override fun onCreateView( //vestigial edit text
 //        inflater: LayoutInflater, container: ViewGroup?,
 //        savedInstanceState: Bundle?
 //    ): View {

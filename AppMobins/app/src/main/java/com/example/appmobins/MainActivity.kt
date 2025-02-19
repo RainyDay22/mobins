@@ -50,7 +50,7 @@ class GlobalVars : Application() {
     }
 }
 
-class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPass {
+class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDataPass {
 
     var dataList = mutableListOf<String>("line 1") //for debugging
 
@@ -260,10 +260,10 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, EtxFrag.OnDataPas
 
                 findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
 
-                val myBrowse: EtxFrag? =
-                    supportFragmentManager.findFragmentByTag("Browse") as EtxFrag?
+                val myBrowse: FileViewFrag? =
+                    supportFragmentManager.findFragmentByTag("Browse") as FileViewFrag?
 
-                val this_browse = EtxFrag()
+                val this_browse = FileViewFrag()
                 val argBundle = Bundle() //init key value pair holder
                 argBundle.putString("path", "/data/data/com.example.appmobins/") //hardcoded
 

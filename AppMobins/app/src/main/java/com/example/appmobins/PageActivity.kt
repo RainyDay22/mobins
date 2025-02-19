@@ -16,7 +16,7 @@ class PageActivity : AppCompatActivity() {
     private var path: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.etx_frag)
+        setContentView(R.layout.fileview_frag)
         val listView = findViewById<ListView>(R.id.file_list)
 
         // Use the current directory as title
