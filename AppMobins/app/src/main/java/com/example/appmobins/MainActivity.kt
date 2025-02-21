@@ -52,7 +52,7 @@ class GlobalVars : Application() {
 
 class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDataPass {
 
-    var dataList = mutableListOf<String>("line 1") //for debugging
+    var dataList = mutableListOf<String>("") //for debugging
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var c_adapter: CustomAdapter
@@ -70,11 +70,11 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)//persistent data
 
-        GlobalVars.setGlobalVarValue("wow") //vestigial
-        val gVal = GlobalVars.getGlobalVarValue() //vestigial
-
-        //simulated output/program to run
-        dataList = mutableListOf<String>("line 1", gVal!!) //debug
+//        GlobalVars.setGlobalVarValue("wow") //vestigial
+//        val gVal = GlobalVars.getGlobalVarValue() //vestigial
+//
+//        //simulated output/program to run
+        dataList = mutableListOf<String>()//"line 1", gVal!!) //debug
 
         //setting up python
         if (!Python.isStarted()) {
@@ -128,8 +128,8 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
 
         findViewById<Button>(R.id.run_button)
             .setOnClickListener {
-                uiOutput(GlobalVars.getGlobalVarValue()!!
-                        + ( sharedPreferences.all).toString() //just for debugging the preferences
+                uiOutput(//GlobalVars.getGlobalVarValue()!!+
+                         ( sharedPreferences.all).toString() //just for debugging the preferences
                 )
             }
 

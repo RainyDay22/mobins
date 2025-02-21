@@ -7,7 +7,7 @@
         android:checkable="true"/>
     <item
         android:id="@+id/item2"
-        android:icon="@drawable/baseline_settings_24"
+        android:icon="@drawable/baseline_folder_24"
         android:title="File Viewer"
         android:checkable="true"/>
     <item

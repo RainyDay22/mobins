@@ -1,22 +1,45 @@
 package com.example.appmobins
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
+import android.graphics.drawable.Icon.createWithResource
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
+import android.widget.ImageView
 import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+class fileInfo(title:String, isFile:Boolean, size:Long, date:String){
+    var _title:String =""
+    var _isFile:Boolean = false
+    var _size:Long = 0
+    var _date:String ="" //unclear how the thing works yet
+
+    init{
+        _title = title
+        _isFile = isFile
+        _size = size
+        _date = date
+    }
+}
+
+fun convertLongToTime(time: Long): String {
+    val date = Date(time)
+    val format = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
+    return format.format(date)
+}
 
 class FileViewFrag : Fragment() {
     private var path: String = "/data/data/com.example.appmobins/"
@@ -31,53 +54,99 @@ class FileViewFrag : Fragment() {
 
         // Use the current directory as title
         path = getArguments()?.getString("path").toString()
-        activity?.setTitle(path)
+        activity?.setTitle("File Viewer")
+        val act = activity as AppCompatActivity
+        act.supportActionBar?.setSubtitle(path) //more type finagling
 
         // Read all files sorted into the values-array
-        val values: MutableList<String> = mutableListOf()
-        val dir = path?.let { File(it) }
-        if (dir != null) {
-            if (!dir.canRead()) {
-                val title = activity?.getTitle()
-                Toast.makeText(activity?.getApplicationContext(), "$title (inaccessible)", Toast.LENGTH_LONG).show()
-            }
+        val values: MutableList<fileInfo> = mutableListOf()
+        val dir = File(path)
+        if (!dir.canRead()) {
+            val title = activity?.getTitle()
+            Toast.makeText(activity?.getApplicationContext(), "$title (inaccessible)", Toast.LENGTH_LONG).show()
         }
 
-        val list = dir?.list()
+        //store files into values container
+        values.add(fileInfo("..", false, 0,"")) //parent dir
+        val list = dir.list()
         if (list != null) {
             for (file in list) {
                 if (!file.startsWith(".")) {
+                    //formatting filename for File API functions
+                    val filename = if (path.endsWith(File.separator)) {
+                        path + file } else { path + File.separator + file }
                     if (file.endsWith(".mi2log")
                         or file.endsWith(".qmdl")){ //filter for log file extension
-                        values.add(file)
+
+                        val fsize= File(filename).length() //in bytes
+                        val fdate = File(filename).lastModified()
+
+                        values.add(fileInfo(file, true, fsize,convertLongToTime(fdate)))
                     }
                     else{ //handle directory
-                        //formatting filename for directory checking
-                        val filename = if (path!!.endsWith(File.separator)) {
-                            path + file } else { path + File.separator + file }
                         //directory check
                         if (File(filename).isDirectory){
-                            values.add(file)
+                            values.add(fileInfo(file, false, 0,""))
                         }
                     }
                 }
             }
         }
-        values.add("..") //parent dir
-        values.sort()
+//        values.sort() //optional
 
         // Put the data into the list
-        val adapter: ArrayAdapter<*> = ArrayAdapter(
-            activity?.getApplicationContext()!!,
-            R.layout.item_layout, R.id.item_text, values
-        )
+        class ListAdapter(context: Context, resource: Int, textViewResourceId:Int,  items: List<fileInfo>) :
+            ArrayAdapter<fileInfo>(context, resource,textViewResourceId, items) {
+            private val resourceLayout: Int
+            private val mContext: Context
+
+            init {
+                resourceLayout = textViewResourceId
+                mContext = context
+            }
+
+            @SuppressLint("ViewHolder") //not sure why but it works
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+//                var cv = convertView
+//
+//                if (cv==null){
+//                    val vi = LayoutInflater.from(mContext)
+//                    cv = vi.inflate(resourceLayout, null)
+//                } //not sure why but it works
+
+                val vi = LayoutInflater.from(mContext)
+                val cv = vi.inflate(resourceLayout, null)
+
+                val file_info = getItem(position)
+
+                if(file_info!=null){
+                    val icon: ImageView = cv.findViewById(R.id.file_icon) //uhhh more sus type overriding
+                    val name:TextView = cv.findViewById(R.id.file_title)
+                    val size:TextView = cv.findViewById(R.id.file_size)
+                    val date:TextView = cv.findViewById(R.id.file_date)
+
+                    if(file_info._isFile) {
+                        icon.setImageIcon(createWithResource(mContext,R.drawable.baseline_file_24))
+                        size.setText((file_info._size).toString())
+                        date.setText(file_info._date)
+                    }
+                    name.setText(file_info._title)
+
+                }
+
+                return cv!! //trust me it won't be null
+            }
+        }
+
+        val adapter = ListAdapter(activity?.getApplicationContext()!!, R.layout.fileitem_layout, R.layout.fileitem_layout, values)
         listView.adapter = adapter
 
 
         //navigate into directories
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
 
-            var filename = (listView.adapter).getItem(position) as String
+            val file = (listView.adapter).getItem(position) as fileInfo
+            var filename = file._title
 
             filename = if (filename==".."){ //handle parent
                 if(path.endsWith(File.separator)){
