@@ -85,7 +85,7 @@ def main():
         sys.stderr = AndroidStream(activity)
 
         print("=========start main=========") #std testing
-        print(type(activity.access_log_size()),"***", activity.access_log_type())
+        print(activity.access_log_size(),"***", activity.access_log_type())
 
         date_time=datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
 

@@ -35,14 +35,14 @@ class fileInfo(title:String, isFile:Boolean, size:Long, date:String){
     }
 }
 
-fun convertLongToTime(time: Long): String {
+fun convertLongToTime(time: Long): String { //standard Kotlin formatting
     val date = Date(time)
     val format = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
     return format.format(date)
 }
 
 class FileViewFrag : Fragment() {
-    private var path: String = "/data/data/com.example.appmobins/"
+    private var path: String = "/data/data/com.example.appmobins/" //hardcoded
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +52,7 @@ class FileViewFrag : Fragment() {
 
         val listView = v.findViewById<ListView>(R.id.file_list)
 
-        // Use the current directory as title
+        // Use the current directory as subtitle
         path = getArguments()?.getString("path").toString()
         activity?.setTitle("File Viewer")
         val act = activity as AppCompatActivity
@@ -68,6 +68,7 @@ class FileViewFrag : Fragment() {
 
         //store files into values container
         values.add(fileInfo("..", false, 0,"")) //parent dir
+
         val list = dir.list()
         if (list != null) {
             for (file in list) {
@@ -75,7 +76,8 @@ class FileViewFrag : Fragment() {
                     //formatting filename for File API functions
                     val filename = if (path.endsWith(File.separator)) {
                         path + file } else { path + File.separator + file }
-                    if (file.endsWith(".mi2log")
+
+                    if (file.endsWith(".mi2log") //handle file
                         or file.endsWith(".qmdl")){ //filter for log file extension
 
                         val fsize= File(filename).length() //in bytes
@@ -120,7 +122,7 @@ class FileViewFrag : Fragment() {
                 val file_info = getItem(position)
 
                 if(file_info!=null){
-                    val icon: ImageView = cv.findViewById(R.id.file_icon) //uhhh more sus type overriding
+                    val icon: ImageView = cv.findViewById(R.id.file_icon)
                     val name:TextView = cv.findViewById(R.id.file_title)
                     val size:TextView = cv.findViewById(R.id.file_size)
                     val date:TextView = cv.findViewById(R.id.file_date)
@@ -207,49 +209,4 @@ class FileViewFrag : Fragment() {
         dataPasser.onDataPass(data)
     } //vestigial end
 
-//    override fun onCreateView( //vestigial edit text
-//        inflater: LayoutInflater, container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View {
-//        val v = inflater.inflate(R.layout.etx_frag, container, false)
-//
-//        var saved_text = "type here"
-//        val edit_text = v.findViewById<EditText>(R.id.etx_box)
-//        edit_text.setHint(saved_text)
-//        edit_text.setOnClickListener{
-//            edit_text.isCursorVisible=true
-//        }
-//
-//        val activity = getActivity()
-//        v.findViewById<Button>(R.id.etx_submit)
-//            .setOnClickListener {
-//
-//                if(saved_text!=edit_text.getText().toString()) {
-//                    saved_text = edit_text.getText().toString()
-//                    passData(Pair("log_cut_size",saved_text))
-//                }
-//
-//                edit_text.isCursorVisible = false
-//                activity?.getCurrentFocus()?.let { view ->
-//                    val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-//                    imm?.hideSoftInputFromWindow(view.windowToken, 0)
-//                }
-//                Toast.makeText(activity?.getApplicationContext(), saved_text, Toast.LENGTH_LONG).show();//debug
-//            }
-//
-//        v.findViewById<Button>(R.id.etx_cancel)
-//            .setOnClickListener {
-//
-//                edit_text.isCursorVisible = false
-//                activity?.getCurrentFocus()?.let { view ->
-//                    val imm =
-//                        activity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-//                    imm?.hideSoftInputFromWindow(view.windowToken, 0)
-//                }
-//                Toast.makeText(activity?.getApplicationContext(), saved_text, Toast.LENGTH_LONG)
-//                    .show();//debug
-//            }
-//
-//                return v
-//    }
 }

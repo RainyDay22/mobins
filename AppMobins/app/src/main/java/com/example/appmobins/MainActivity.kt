@@ -33,22 +33,22 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-class GlobalVars : Application() {
-    companion object {
-        private var mGlobalVarValue: String? = null
-        private var switchState: Boolean = false
-        fun getGlobalVarValue(): String? {
-            return mGlobalVarValue
-        }
-        fun getSwitchState(): Boolean{return switchState}
-        fun setGlobalVarValue(str: String?) {
-            mGlobalVarValue = str
-        }
-
-        fun setSwitchState(state: Boolean){
-            switchState=state}
-    }
-}
+//class GlobalVars : Application() {
+//    companion object {
+//        private var mGlobalVarValue: String? = null
+//        private var switchState: Boolean = false
+//        fun getGlobalVarValue(): String? {
+//            return mGlobalVarValue
+//        }
+//        fun getSwitchState(): Boolean{return switchState}
+//        fun setGlobalVarValue(str: String?) {
+//            mGlobalVarValue = str
+//        }
+//
+//        fun setSwitchState(state: Boolean){
+//            switchState=state}
+//    }
+//} //vestigial
 
 class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDataPass {
 
@@ -61,6 +61,8 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
     lateinit var actionBarDrawerToggle: ActionBarDrawerToggle //menu ip, needed import
 
     lateinit var sharedPreferences: SharedPreferences
+    val default_logsize = "500" //bytes
+    val default_logtype = "All"
     var installMode : Boolean = true //flag is true if the app is run for the first time, flag for install mode
 
 
@@ -86,7 +88,7 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
 
         //copy assets over, only run on installation aka not normalRun aka first run
         //assets are c and wireshark packages
-        var settings:SharedPreferences= getSharedPreferences("PREFS_NAME", 0)
+        val settings:SharedPreferences= getSharedPreferences("PREFS_NAME", 0)
         installMode = settings.getBoolean("FIRST_RUN", true)
         if (installMode) {
             copyAssets()
@@ -183,12 +185,12 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
     }
 
     fun access_log_size():Float{ //accessor for settings called by python script
-        val logSize = sharedPreferences.getString("edit_text_preference", "500")
+        val logSize = sharedPreferences.getString("edit_text_preference", default_logsize)
         return logSize!!.toFloat()
     }
 
     fun access_log_type():String{ //accessor for settings called by python script
-        return sharedPreferences.getString("list_preference","All")+""
+        return sharedPreferences.getString("list_preference",default_logtype)+""
     }
 
     fun uiOutput(text: String?) { //console printer, called by kotlin and python
