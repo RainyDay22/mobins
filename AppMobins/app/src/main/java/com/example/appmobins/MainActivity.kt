@@ -60,6 +60,8 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
     lateinit var drawerLayout: DrawerLayout //menu ip, needed import
     lateinit var actionBarDrawerToggle: ActionBarDrawerToggle //menu ip, needed import
 
+    lateinit var pyInstance:Python
+
     lateinit var sharedPreferences: SharedPreferences
     val default_logsize = "500" //bytes
     val default_logtype = "All"
@@ -82,8 +84,8 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
         if (!Python.isStarted()) {
             Python.start(AndroidPlatform(this))
         }
-        val py = Python.getInstance()
-        val module = py.getModule("main")
+        pyInstance= Python.getInstance()
+        val module = pyInstance.getModule("main")
         module.put("activity", this)
 
         //copy assets over, only run on installation aka not normalRun aka first run
@@ -205,7 +207,6 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
     override fun onDataPass(data: Pair<String, String>) { //fragment info pass
         Log.d("pass","hello " + data)
         //currently unused since settings info is accessed via persistent memory now
-
     }
 
     override fun onFragDestroyed(){ //when pages are closed and we return to mainActivity screen
@@ -215,6 +216,8 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
         if (supportFragmentManager.getBackStackEntryCount()==0) {
             if (to_restore.getVisibility() != View.VISIBLE)
                 to_restore.setVisibility(View.VISIBLE)
+            supportActionBar?.setTitle(R.string.app_name) //reset Appbar contents to mirror navigation
+            supportActionBar?.setSubtitle("")
         }
     }
 
@@ -257,7 +260,6 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
 
             }
             R.id.item2 -> {
-                Toast.makeText(this, "Open File Browser", Toast.LENGTH_SHORT).show()
                 val files_dir = this.getFilesDir().getPath() //debug
 
                 findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
@@ -273,7 +275,7 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
 
                 if (myBrowse==null || !myBrowse.isVisible){ //avoid duplicates in frag backstack
                     supportFragmentManager.commit {
-                        add(R.id.fragment_holder, this_browse, "Browse") //tag of actual Fragment
+                        replace(R.id.fragment_holder, this_browse, "Browse") //tag of actual Fragment
                         setReorderingAllowed(true) //not sure why this is needed
 
                         addToBackStack("Browse") // name of backStackEntry, one entry per commit

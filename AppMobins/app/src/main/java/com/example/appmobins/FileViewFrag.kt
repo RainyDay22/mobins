@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Icon.createWithResource
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import com.chaquo.python.PyException
+import com.chaquo.python.PyObject
+import com.chaquo.python.Python
+import com.chaquo.python.android.AndroidPlatform
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -43,6 +48,18 @@ fun convertLongToTime(time: Long): String { //standard Kotlin formatting
 
 class FileViewFrag : Fragment() {
     private var path: String = "/data/data/com.example.appmobins/" //hardcoded
+    private lateinit var file_pymodule: PyObject
+
+    override fun onCreate(savedInstanceState: Bundle?) { //python set up
+        super.onCreate(savedInstanceState)
+        val main_act = activity as MainActivity //cast from FragmentActivity to MainActivity (aka my own class)
+
+        //start python
+        if (!Python.isStarted()) {
+            Python.start(AndroidPlatform(main_act))
+        }
+        file_pymodule = main_act.pyInstance.getModule("read_milog")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,8 +71,9 @@ class FileViewFrag : Fragment() {
 
         // Use the current directory as subtitle
         path = getArguments()?.getString("path").toString()
-        activity?.setTitle("File Viewer")
+
         val act = activity as AppCompatActivity
+        act.supportActionBar?.setTitle("File Viewer")
         act.supportActionBar?.setSubtitle(path) //more type finagling
 
         // Read all files sorted into the values-array
@@ -182,6 +200,18 @@ class FileViewFrag : Fragment() {
 
                 } else {
                 Toast.makeText(activity?.getApplicationContext(), "$filename is not a directory", Toast.LENGTH_LONG).show()
+
+                val pythread = Thread {
+                    Log.d("fvfrag", "Thread is running...")
+                    try {
+                        val pystr = file_pymodule.callAttr("read_milog", filename) //function call w arg
+                        Log.d("fvfrag", pystr.toString())
+                    } catch (e: PyException) {
+                        Log.d("fvfrag","Error: ${e.message}")
+                    }
+                }
+                pythread.start()
+
             }
         }
 

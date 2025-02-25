@@ -3,6 +3,7 @@ package com.example.appmobins
 import android.content.Context
 import android.os.Bundle
 import android.text.InputType
+import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.EditTextPreference
 import androidx.preference.EditTextPreference.OnBindEditTextListener
 import androidx.preference.PreferenceFragmentCompat
@@ -24,11 +25,16 @@ class PrefFrag : PreferenceFragmentCompat() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         dataPasser = context as OnDataPass
+
+        val act = activity as AppCompatActivity
+        act.supportActionBar?.setTitle("Settings")
+        act.supportActionBar?.setSubtitle("")
     }
 
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences)
+
         val edit_pref =
             preferenceManager.findPreference<EditTextPreference>("edit_text_preference")
 
