@@ -269,7 +269,7 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
 
                 val this_browse = FileViewFrag()
                 val argBundle = Bundle() //init key value pair holder
-                argBundle.putString("path", "/data/data/com.example.appmobins/") //hardcoded
+                argBundle.putString("path", files_dir)//"/data/data/com.example.appmobins/") //hardcoded
 
                 this_browse.setArguments(argBundle)
 

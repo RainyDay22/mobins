@@ -14,7 +14,6 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.chaquo.python.PyException
@@ -49,16 +48,17 @@ fun convertLongToTime(time: Long): String { //standard Kotlin formatting
 class FileViewFrag : Fragment() {
     private var path: String = "/data/data/com.example.appmobins/" //hardcoded
     private lateinit var file_pymodule: PyObject
+    private lateinit var act:MainActivity
 
     override fun onCreate(savedInstanceState: Bundle?) { //python set up
         super.onCreate(savedInstanceState)
-        val main_act = activity as MainActivity //cast from FragmentActivity to MainActivity (aka my own class)
+        act = activity as MainActivity //cast from FragmentActivity to MainActivity (aka my own class)
 
         //start python
         if (!Python.isStarted()) {
-            Python.start(AndroidPlatform(main_act))
+            Python.start(AndroidPlatform(act))
         }
-        file_pymodule = main_act.pyInstance.getModule("read_milog")
+        file_pymodule = act.pyInstance.getModule("read_milog")
     }
 
     override fun onCreateView(
@@ -72,7 +72,6 @@ class FileViewFrag : Fragment() {
         // Use the current directory as subtitle
         path = getArguments()?.getString("path").toString()
 
-        val act = activity as AppCompatActivity
         act.supportActionBar?.setTitle("File Viewer")
         act.supportActionBar?.setSubtitle(path) //more type finagling
 
@@ -80,8 +79,8 @@ class FileViewFrag : Fragment() {
         val values: MutableList<fileInfo> = mutableListOf()
         val dir = File(path)
         if (!dir.canRead()) {
-            val title = activity?.getTitle()
-            Toast.makeText(activity?.getApplicationContext(), "$title (inaccessible)", Toast.LENGTH_LONG).show()
+            val title = act.getTitle()
+            Toast.makeText(act.getApplicationContext(), "$title (inaccessible)", Toast.LENGTH_LONG).show()
         }
 
         //store files into values container
@@ -101,7 +100,7 @@ class FileViewFrag : Fragment() {
                         val fsize= File(filename).length() //in bytes
                         val fdate = File(filename).lastModified()
 
-                        values.add(fileInfo(file, true, fsize,convertLongToTime(fdate)))
+                        values.add(fileInfo(file, true, fsize, convertLongToTime(fdate)))
                     }
                     else{ //handle directory
                         //directory check
@@ -158,7 +157,7 @@ class FileViewFrag : Fragment() {
             }
         }
 
-        val adapter = ListAdapter(activity?.getApplicationContext()!!, R.layout.fileitem_layout, R.layout.fileitem_layout, values)
+        val adapter = ListAdapter(act.getApplicationContext()!!, R.layout.fileitem_layout, R.layout.fileitem_layout, values)
         listView.adapter = adapter
 
 
@@ -190,8 +189,8 @@ class FileViewFrag : Fragment() {
                 thisBrowse.setArguments(argBundle) //pass new file forward to next frag
 
                 //fragment transaction
-                val supportFragmentManager = activity?.getSupportFragmentManager()
-                supportFragmentManager?.commit {
+                val supportFragmentManager = act.getSupportFragmentManager()
+                supportFragmentManager.commit {
                     replace(R.id.fragment_holder, thisBrowse, "r_browse")
                     setReorderingAllowed(true)
 
@@ -199,13 +198,22 @@ class FileViewFrag : Fragment() {
                 }
 
                 } else {
-                Toast.makeText(activity?.getApplicationContext(), "$filename is not a directory", Toast.LENGTH_LONG).show()
+                Toast.makeText(act.getApplicationContext(), "$filename is not a directory", Toast.LENGTH_LONG).show()
 
+                var log_list: MutableList<PyObject>? = null
                 val pythread = Thread {
                     Log.d("fvfrag", "Thread is running...")
                     try {
                         val pystr = file_pymodule.callAttr("read_milog", filename) //function call w arg
                         Log.d("fvfrag", pystr.toString())
+
+                        log_list = pystr.asList() //cast
+
+                        //below is all debugging
+                        Log.d("fvfrag", "hey it worked")
+                        act.runOnUiThread{Toast.makeText(act.getApplicationContext(), "thread is done", Toast.LENGTH_SHORT).show()
+                            //TODO: from here launch new fragment to browse logs
+                        }
                     } catch (e: PyException) {
                         Log.d("fvfrag","Error: ${e.message}")
                     }
