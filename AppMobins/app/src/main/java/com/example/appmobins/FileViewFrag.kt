@@ -198,7 +198,7 @@ class FileViewFrag : Fragment() {
                 }
 
                 } else {
-                Toast.makeText(act.getApplicationContext(), "$filename is not a directory", Toast.LENGTH_LONG).show()
+//                Toast.makeText(act.getApplicationContext(), "$filename is not a directory", Toast.LENGTH_LONG).show()
 
                 var log_list: MutableList<PyObject>? = null
                 val pythread = Thread {
@@ -210,10 +210,12 @@ class FileViewFrag : Fragment() {
                         log_list = pystr.asList() //cast
 
                         //below is all debugging
-                        Log.d("fvfrag", "hey it worked")
-                        act.runOnUiThread{Toast.makeText(act.getApplicationContext(), "thread is done", Toast.LENGTH_SHORT).show()
-                            //TODO: from here launch new fragment to browse logs
+                        act.runOnUiThread{
+                            Toast.makeText(act.getApplicationContext(), "thread is done", Toast.LENGTH_SHORT).show()
+                            act.log_debug = log_list //tt log debug
                         }
+                    //TODO: from here launch new fragment to browse logs
+
                     } catch (e: PyException) {
                         Log.d("fvfrag","Error: ${e.message}")
                     }

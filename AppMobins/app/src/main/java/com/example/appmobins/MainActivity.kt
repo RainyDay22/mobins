@@ -23,6 +23,7 @@ import androidx.fragment.app.commit
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chaquo.python.PyException
+import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
 import com.fox2code.androidansi.AnsiParser
@@ -66,6 +67,8 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
     val default_logsize = "500" //bytes
     val default_logtype = "All"
     var installMode : Boolean = true //flag is true if the app is run for the first time, flag for install mode
+
+    var log_debug:List<PyObject>?=null//tt
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -139,10 +142,40 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
 
         findViewById<Button>(R.id.travel_button)
             .setOnClickListener {
-                val travelIntent =
-                    Intent(this@MainActivity, PageActivity::class.java)
-                startActivity(travelIntent)
-                Log.d("NAV", "Tried to nav to other activity")
+
+                //start another activity
+//                val travelIntent =
+//                    Intent(this@MainActivity, PageActivity::class.java)
+//                startActivity(travelIntent)
+//                Log.d("NAV", "Tried to nav to other activity")
+
+                //start another frag //tt
+                findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
+
+                val myLog: LogViewFrag? =
+                    supportFragmentManager.findFragmentByTag("myLog") as LogViewFrag?
+
+                val this_log = LogViewFrag()
+//                val arglogBundle = Bundle() //init key value pair holder
+
+
+                uiOutput(log_debug.toString())
+                //didn't want to wrestle with bundle and data type anymore
+//                arglogBundle.putSerializable("log_source", ArrayList(log_debug?)) //yolo tt,
+//                // casting to arraylist makes it serializable apparently
+//
+//                this_log.arguments = arglogBundle
+
+                if (myLog==null || !myLog.isVisible){ //avoid duplicates in frag backstack
+                    supportFragmentManager.commit {
+                        replace(R.id.fragment_holder, this_log, "myLog") //tag of actual Fragment
+                        setReorderingAllowed(true) //not sure why this is needed
+
+                        addToBackStack("myLog") // name of backStackEntry, one entry per commit
+
+                    }
+                }
+
 
             }
 

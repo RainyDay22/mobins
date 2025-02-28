@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/log_frame"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:background="#d2d2d2"
+        android:gravity="center">
+
+
+        <TextView
+            android:id="@+id/log_index"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text=" 101 "
+            android:textSize = "18sp"
+            android:background = "#7fcbc7"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <Space
+            android:id="@+id/log_space"
+            android:layout_height="match_parent"
+            android:layout_width="40dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/log_index"/>
+
+        <TextView
+            android:id="@+id/log_type"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="TypeID like 5G Wireless"
+            android:textSize="18sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/log_space"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
