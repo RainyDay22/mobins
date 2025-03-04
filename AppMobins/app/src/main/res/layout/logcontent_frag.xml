@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/log_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#d2d2d2">
+
+        <TextView
+            android:id="@+id/log_title"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Log Type Stand in"
+            android:textSize = "18sp"
+            android:background = "#bbe3f1"
+            android:gravity = "center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/log_date"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="1995-08-08 12:09:32"
+            android:textSize = "18sp"
+            android:background = "#bbe3f1"
+            android:gravity = "center"
+            app:layout_constraintTop_toBottomOf="@id/log_title"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/log_payload"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constrainedHeight="true"
+            android:text=""
+            android:textSize = "18sp"
+            android:scrollbars = "vertical"
+            app:layout_constraintTop_toBottomOf="@id/log_date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

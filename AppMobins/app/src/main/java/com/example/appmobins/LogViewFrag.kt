@@ -2,33 +2,24 @@ package com.example.appmobins
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.drawable.Icon.createWithResource
 import android.os.Bundle
-import android.util.Log
+import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import com.chaquo.python.PyException
 import com.chaquo.python.PyObject
-import com.chaquo.python.Python
-import com.chaquo.python.android.AndroidPlatform
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
-//class logInfo(title:String, size:Long, date:String){
+//class logInfo(title:String, size:Long, date:String){ //possible to use this for speed optimization
 //    var _title:String =""
 //    var _size:Long = 0
-//    var _date:String ="" //unclear how the thing works yet
+//    var _date:String =""
 //
 //    init{
 //        _title = title
@@ -92,10 +83,7 @@ class LogViewFrag : Fragment() {
                     val log_info: Map<String, String> = log_obj.asMap() as Map<String, String> //unchecked cast
                     val index: TextView = cv.findViewById(R.id.log_index)
                     val name:TextView = cv.findViewById(R.id.log_type)
-//                    val size:TextView = cv.findViewById(R.id.log_size) //tt
 
-                    //tt
-//                    size.setText((log_info['Payload']).toString())
                     index.setText(position.toString())
                     name.setText(log_info["TypeID"].toString())
 
@@ -120,10 +108,65 @@ class LogViewFrag : Fragment() {
         }
 
 
-        //navigate into directories
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             //handle the dialog opening stuff here
+            val log_obj: PyObject = (listView.adapter).getItem(position) as PyObject
+            val log_info: Map<String, String> = log_obj.asMap() as Map<String, String> //unchecked cast
+
+            val log_payload = log_info["Payload"].toString()
+
+            //put into Bundle
+            //do fragment transaction
+
+            val thisContent = LogContentFrag()
+            val argBundle = Bundle()
+            argBundle.putString("type_title", log_info["TypeID"].toString()) //redundant
+            argBundle.putString("date", log_info["Timestamp"].toString()) //redundant
+            argBundle.putString("payload", log_payload)
+
+
+            thisContent.setArguments(argBundle)
+
+            //fragment transaction
+            val supportFragmentManager = act.supportFragmentManager//act.getSupportFragmentManager()
+            supportFragmentManager.commit {
+                replace(R.id.fragment_holder, thisContent, "l_content")
+                setReorderingAllowed(true)
+                addToBackStack("l_content")
+            }
+
+
         }
+
+        return v
+    }
+}
+
+class LogContentFrag : Fragment() {
+    private var payload:String? = ""
+    private var type_title:String? = ""
+    private var date:String? =""
+
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val v = inflater.inflate(R.layout.logcontent_frag, container, false)
+        //set the strings to the xml holders
+        val name:TextView = v.findViewById(R.id.log_title)
+        val datetime:TextView = v.findViewById(R.id.log_date)
+        val content:TextView = v.findViewById(R.id.log_payload)
+
+        type_title = getArguments()?.getString("type_title")
+        date = getArguments()?.getString("date")
+        payload = getArguments()?.getString("payload")
+
+        content.setMovementMethod(ScrollingMovementMethod())
+
+        name.setText(type_title)
+        datetime.setText(date)
+        content.setText(payload)
 
         return v
     }

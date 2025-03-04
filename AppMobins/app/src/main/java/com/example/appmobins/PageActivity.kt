@@ -2,10 +2,12 @@ package com.example.appmobins
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.io.File
@@ -16,59 +18,48 @@ class PageActivity : AppCompatActivity() {
     private var path: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fileview_frag)
-        val listView = findViewById<ListView>(R.id.file_list)
+        setContentView(R.layout.logcontent_frag)
 
-        // Use the current directory as title
-        path = "/data/data/com.example.appmobins/"
-        if (intent.hasExtra("path")) {
-            //^ recursive response to intent being called in this activity
-            path = intent.getStringExtra("path")
-        }
-        title = path
+        val pay_text: TextView = findViewById(R.id.log_payload)
+        pay_text.setMovementMethod(ScrollingMovementMethod())
+        pay_text.setText("JAVA IS A TECHNOLOGY OF CHOICE FOR BUILDING APPLICATIONS" +
+                " USING MANAGED CODES THAT CAN EXECUTE ON MOBILE DEVICES.\n" +
+                "\n" +
+                "Android is an open source software platform and Linux-based" +
+                " operating system for mobile devices. The Android platform " +
+                "allows developers to write managed code using Java to manage " +
+                "and control the Android device. Android applications can be" +
+                " developed by using the Java programming language and the " +
+                "Android SDK. So, familiarity with the basics of the Java " +
+                "programming language is a prerequisite for programming on" +
+                " the Android platform. This article discusses where Java fits" +
+                " in mobile application development and how we can use Java and" +
+                " Android SDK to write applications that can work on Android devices.\n" +
+                "\n" +
+                "THE CHOICE OF JAVA\n" +
+                "\n "+
+                "What made Java be the technology of choice for mobile development for the" +
+                " Android platform? The Java Programming Language emerged in the mid-1990s;" +
+                " it was created by James Gosling of Sun Microsystems. Incidentally," +
+                " Sun Microsystems was since bought by Oracle." +
+                " Java has been widely popular the world over, " +
+                "primarily because of a vast array of features it provides. " +
+                "Java’s promise of “Write once and run anywhere” was one of the major" +
+                " factors for the success of Java over the past few decades.\n" +
+                "\n" +
+                "Java even made inroads into embedded processors technology as well;" +
+                " the Java Mobile Edition was built for creating applications " +
+                "that can run on mobile devices. All these, added to Java’s meteoric rise," +
+                " were the prime factors that attributed to the decision of adopting " +
+                "Java as the primary development language for building " +
+                "applications that run on Android. Java programs are secure because" +
+                " they run within a sandbox environment. Programs written in Java are compiled " +
+                "into intermediate code known as bytecode. This bytecode is then executed inside" +
+                " the context of the Java Virtual Machine. You can learn more about Java from" +
+                " this link.\n" +
+                "\n" +
+                "USING JAVA FOR BUILDING MOBILE APPLICATIONS\n")
 
-        // Read all files sorted into the values-array
-        val values: MutableList<String> = mutableListOf()
-        val dir = path?.let { File(it) }
-        if (dir != null) {
-            if (!dir.canRead()) {
-                title = "$title (inaccessible)"
-            }
-        }
-        val list = dir?.list()
-        if (list != null) {
-            for (file in list) {
-                if (!file.startsWith(".")) {
-                    values.add(file)
-                }
-            }
-        }
-        values.sort()
-
-        // Put the data into the list
-        val adapter: ArrayAdapter<*> = ArrayAdapter(
-            this,
-            R.layout.item_layout, R.id.item_text, values
-        )
-        listView.adapter = adapter
-
-
-        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-
-            var filename = (listView.adapter).getItem(position) as String
-            filename = if (path!!.endsWith(File.separator)) {
-                path + filename
-            } else {
-                path + File.separator + filename
-            }
-            if (File(filename).isDirectory) {
-                val intent = Intent(this@PageActivity, PageActivity::class.java)
-                intent.putExtra("path", filename)
-                startActivity(intent)
-            } else {
-                Toast.makeText(this, "$filename is not a directory", Toast.LENGTH_LONG).show()
-            }
-        }
     }
 
 //    override fun onListItemClick(l: ListView, v: View, position: Int, id: Long) {

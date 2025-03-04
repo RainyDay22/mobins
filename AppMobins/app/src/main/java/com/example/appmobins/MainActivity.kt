@@ -144,38 +144,26 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
             .setOnClickListener {
 
                 //start another activity
-//                val travelIntent =
-//                    Intent(this@MainActivity, PageActivity::class.java)
-//                startActivity(travelIntent)
-//                Log.d("NAV", "Tried to nav to other activity")
+                val travelIntent =
+                    Intent(this@MainActivity, PageActivity::class.java)
+                startActivity(travelIntent)
+                Log.d("NAV", "Tried to nav to other activity")
 
-                //start another frag //tt
-                findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
-
-                val myLog: LogViewFrag? =
-                    supportFragmentManager.findFragmentByTag("myLog") as LogViewFrag?
-
-                val this_log = LogViewFrag()
-//                val arglogBundle = Bundle() //init key value pair holder
-
-
-                uiOutput(log_debug.toString())
-                //didn't want to wrestle with bundle and data type anymore
-//                arglogBundle.putSerializable("log_source", ArrayList(log_debug?)) //yolo tt,
+//                //start another frag //tt bundling troubles
+//                findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
+//
+//                val myLog: LogViewFrag? =
+//                    supportFragmentManager.findFragmentByTag("myLog") as LogViewFrag?
+//
+//                val this_log = LogViewFrag()
+////                val arglogBundle = Bundle() //init key value pair holder
+//
+//                uiOutput(log_debug.toString())
+//                //didn't want to wrestle with bundle and data type anymore
+////                arglogBundle.putSerializable("log_source", ArrayList(log_debug)) //yolo tt,
 //                // casting to arraylist makes it serializable apparently
 //
-//                this_log.arguments = arglogBundle
-
-                if (myLog==null || !myLog.isVisible){ //avoid duplicates in frag backstack
-                    supportFragmentManager.commit {
-                        replace(R.id.fragment_holder, this_log, "myLog") //tag of actual Fragment
-                        setReorderingAllowed(true) //not sure why this is needed
-
-                        addToBackStack("myLog") // name of backStackEntry, one entry per commit
-
-                    }
-                }
-
+////                this_log.arguments = arglogBundle
 
             }
 
@@ -244,6 +232,16 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
 
     override fun onFragDestroyed(){ //when pages are closed and we return to mainActivity screen
         val to_restore = findViewById<FrameLayout>(R.id.main_frame)
+
+//fragment backstack debugging
+//        var bstack_entry_name ="nahhh"
+//        val bstack_ind = supportFragmentManager.getBackStackEntryCount()-1
+//            if(bstack_ind>=0) {
+//                val bstack_entry = supportFragmentManager.getBackStackEntryAt(bstack_ind)
+//                bstack_entry_name = bstack_entry.getName()!!
+//            }
+//
+//        Log.d("wuuuu",(bstack_ind+1).toString()+"===="+bstack_entry_name)
 
         //only make visible if all fragments are cleared
         if (supportFragmentManager.getBackStackEntryCount()==0) {
@@ -318,7 +316,8 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
             }
             R.id.item3 -> { //back button
                 for (i in 1..supportFragmentManager.getBackStackEntryCount())
-                {supportFragmentManager.popBackStack()} //wipes fragment backstack
+                {supportFragmentManager.popBackStackImmediate()} //wipes fragment backstack
+                onFragDestroyed() //manually call to deal with logfragments and logcontent fragments //TODO test again to check if needed
             }
         }
         // Close the drawer after handling the click

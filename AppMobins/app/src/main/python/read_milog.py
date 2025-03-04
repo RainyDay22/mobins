@@ -27,14 +27,10 @@ def read_milog( toanalyze_path):
 
         loggingAnalyzer = LogAnalyzer(None)
         loggingAnalyzer.AnalyzeFile(toanalyze_path, None)
-        woop = loggingAnalyzer.msg_logs #list of dictionaries, log_outputs
+        log_outputs = loggingAnalyzer.msg_logs #list of dictionaries of length 3, keys "TypeID", "Timestamp", "Payload"
 
         # print(type(woop), len(woop[0]), woop[:5]) #debugging
-
-        # loggingAnalyzer.set_source(src) //??
-
-        # ret_val = [{'a': 1, 'b': 12, 'c': 4, 'd': 6, 'e': 5}] #test to see how chaquo handles dictionaries
-        ret_val = woop[:5]
+        ret_val = log_outputs
 
     except Exception:
         ret_val= traceback.format_exc()

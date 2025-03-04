@@ -189,7 +189,7 @@ class FileViewFrag : Fragment() {
                 thisBrowse.setArguments(argBundle) //pass new file forward to next frag
 
                 //fragment transaction
-                val supportFragmentManager = act.getSupportFragmentManager()
+                val supportFragmentManager = act.supportFragmentManager
                 supportFragmentManager.commit {
                     replace(R.id.fragment_holder, thisBrowse, "r_browse")
                     setReorderingAllowed(true)
@@ -209,13 +209,23 @@ class FileViewFrag : Fragment() {
 
                         log_list = pystr.asList() //cast
 
-                        //below is all debugging
                         act.runOnUiThread{
                             Toast.makeText(act.getApplicationContext(), "thread is done", Toast.LENGTH_SHORT).show()
                             act.log_debug = log_list //tt log debug
-                        }
-                    //TODO: from here launch new fragment to browse logs
 
+                            //launch logview frag
+                            val thisLog = LogViewFrag()
+
+                            //fragment transaction
+                            val supportFragmentManager = act.supportFragmentManager//act.getSupportFragmentManager()
+                            supportFragmentManager.commit {
+                                replace(R.id.fragment_holder, thisLog, "l_log")
+                                setReorderingAllowed(true)
+
+                                addToBackStack("l_log")
+                            }
+
+                        }
                     } catch (e: PyException) {
                         Log.d("fvfrag","Error: ${e.message}")
                     }
