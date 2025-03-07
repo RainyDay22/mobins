@@ -29,14 +29,14 @@ import com.chaquo.python.PyObject
 //}
 
 class LogViewFrag : Fragment() {
-    private var path: String = "/data/data/com.example.appmobins/" //tt
+    private var path: String = "/data/data/com.example.appmobins/" //subtitle?
     private lateinit var act:MainActivity
     private var log_source: List<PyObject>? =null //will hold all the msg_logs returned by LogAnalyzer
 
     override fun onCreate(savedInstanceState: Bundle?) { //activity init
         super.onCreate(savedInstanceState)
         act = activity as MainActivity //cast from FragmentActivity to MainActivity (aka my own class)
-        log_source = act.log_debug
+        log_source = act.log_store
     }
 
     override fun onCreateView(
@@ -67,13 +67,6 @@ class LogViewFrag : Fragment() {
 
             @SuppressLint("ViewHolder") //not sure why but it works
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-//                var cv = convertView
-//
-//                if (cv==null){
-//                    val vi = LayoutInflater.from(mContext)
-//                    cv = vi.inflate(resourceLayout, null)
-//                } //not sure why but it works
-
                 val vi = LayoutInflater.from(mContext)
                 val cv = vi.inflate(resourceLayout, null)
 
@@ -81,9 +74,12 @@ class LogViewFrag : Fragment() {
 
                 if(log_obj!=null){
                     val log_info: Map<String, String> = log_obj.asMap() as Map<String, String> //unchecked cast
+
+                    //fetch xml elements
                     val index: TextView = cv.findViewById(R.id.log_index)
                     val name:TextView = cv.findViewById(R.id.log_type)
 
+                    //populate xml elemets
                     index.setText(position.toString())
                     name.setText(log_info["TypeID"].toString())
 
@@ -109,7 +105,7 @@ class LogViewFrag : Fragment() {
 
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            //handle the dialog opening stuff here
+            //open log contents
             val log_obj: PyObject = (listView.adapter).getItem(position) as PyObject
             val log_info: Map<String, String> = log_obj.asMap() as Map<String, String> //unchecked cast
 

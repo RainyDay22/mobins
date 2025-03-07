@@ -40,30 +40,22 @@
                         tools:layout_editor_absoluteX="16dp"
                         />
 
-                    <Button
-                        android:id="@+id/run_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Print"
-                        app:layout_constraintTop_toBottomOf="@id/space"
-                        app:layout_constraintStart_toStartOf="parent" />
+<!--                    <Button-->
+<!--                        android:id="@+id/run_button"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Print"-->
+<!--                        app:layout_constraintTop_toBottomOf="@id/space"-->
+<!--                        app:layout_constraintStart_toStartOf="parent" />-->
 
 
-                    <Button
-                        android:id="@+id/clear_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Clear"
-                        app:layout_constraintTop_toBottomOf="@id/space"
-                        app:layout_constraintStart_toEndOf="@id/run_button" />
-
-                    <Button
-                        android:id="@+id/travel_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Sandbox"
-                        app:layout_constraintTop_toBottomOf="@id/space"
-                        app:layout_constraintStart_toEndOf="@id/clear_button" />
+<!--                    <Button-->
+<!--                        android:id="@+id/travel_button"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Sandbox"-->
+<!--                        app:layout_constraintTop_toBottomOf="@id/space"-->
+<!--                        app:layout_constraintStart_toEndOf="@id/clear_button" />-->
 
 
                     <Button
@@ -71,16 +63,27 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Run Python"
-                        app:layout_constraintTop_toBottomOf="@id/clear_button"
+                        app:layout_constraintTop_toBottomOf="@id/space"
                         app:layout_constraintStart_toStartOf="parent"/>
 
                     <Button
-                        android:id="@+id/Stop_button"
+                        android:id="@+id/stop_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Stop"
-                        app:layout_constraintTop_toBottomOf="@id/clear_button"
-                        app:layout_constraintStart_toEndOf="@id/python_button"/>
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintTop_toBottomOf="@id/space"
+                        app:layout_constraintStart_toEndOf="@id/python_button"
+                        />
+
+                    <Button
+                        android:id="@+id/clear_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Clear"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintTop_toBottomOf="@id/space"
+                        app:layout_constraintStart_toEndOf="@id/stop_button" />
 
 
                     <FrameLayout

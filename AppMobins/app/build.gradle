@@ -20,7 +20,7 @@ android {
             useSupportLibrary true
         }
 
-        //start chaquopy code (might be the wrong kind of gralde?)
+        //start chaquopy code
         python {
             pip {
                 install "six"

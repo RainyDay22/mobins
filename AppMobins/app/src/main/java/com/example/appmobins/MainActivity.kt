@@ -34,32 +34,15 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-//class GlobalVars : Application() {
-//    companion object {
-//        private var mGlobalVarValue: String? = null
-//        private var switchState: Boolean = false
-//        fun getGlobalVarValue(): String? {
-//            return mGlobalVarValue
-//        }
-//        fun getSwitchState(): Boolean{return switchState}
-//        fun setGlobalVarValue(str: String?) {
-//            mGlobalVarValue = str
-//        }
-//
-//        fun setSwitchState(state: Boolean){
-//            switchState=state}
-//    }
-//} //vestigial
-
 class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDataPass {
 
-    var dataList = mutableListOf<String>("") //for debugging
+    var dataList = mutableListOf<String>("")
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var c_adapter: CustomAdapter
 
-    lateinit var drawerLayout: DrawerLayout //menu ip, needed import
-    lateinit var actionBarDrawerToggle: ActionBarDrawerToggle //menu ip, needed import
+    lateinit var drawerLayout: DrawerLayout //menu
+    lateinit var actionBarDrawerToggle: ActionBarDrawerToggle //menu
 
     lateinit var pyInstance:Python
 
@@ -68,7 +51,7 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
     val default_logtype = "All"
     var installMode : Boolean = true //flag is true if the app is run for the first time, flag for install mode
 
-    var log_debug:List<PyObject>?=null//tt
+    var log_store:List<PyObject>?=null//used to let fileviewer pass object to log analyzer
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,11 +60,7 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)//persistent data
 
-//        GlobalVars.setGlobalVarValue("wow") //vestigial
-//        val gVal = GlobalVars.getGlobalVarValue() //vestigial
-//
-//        //simulated output/program to run
-        dataList = mutableListOf<String>()//"line 1", gVal!!) //debug
+        dataList = mutableListOf<String>()
 
         //setting up python
         if (!Python.isStarted()) {
@@ -89,7 +68,7 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
         }
         pyInstance= Python.getInstance()
         val module = pyInstance.getModule("main")
-        module.put("activity", this)
+        module.put("activity", this) //pass itself to python in the "acivity" variable
 
         //copy assets over, only run on installation aka not normalRun aka first run
         //assets are c and wireshark packages
@@ -133,46 +112,46 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
         c_adapter = CustomAdapter(dataList)
         recyclerView.adapter = c_adapter
 
-        findViewById<Button>(R.id.run_button)
-            .setOnClickListener {
-                uiOutput(//GlobalVars.getGlobalVarValue()!!+
-                         ( sharedPreferences.all).toString() //just for debugging the preferences
-                )
-            }
+//        findViewById<Button>(R.id.run_button) //debug
+//            .setOnClickListener {
+//                uiOutput(//GlobalVars.getGlobalVarValue()!!+
+//                         ( sharedPreferences.all).toString() //just for debugging the preferences
+//                )
+//            }
 
-        findViewById<Button>(R.id.travel_button)
-            .setOnClickListener {
-
-                //start another activity
-                val travelIntent =
-                    Intent(this@MainActivity, PageActivity::class.java)
-                startActivity(travelIntent)
-                Log.d("NAV", "Tried to nav to other activity")
-
-//                //start another frag //tt bundling troubles
-//                findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
+//        findViewById<Button>(R.id.travel_button) //debug
+//            .setOnClickListener {
 //
-//                val myLog: LogViewFrag? =
-//                    supportFragmentManager.findFragmentByTag("myLog") as LogViewFrag?
+//                //start another activity
+//                val travelIntent =
+//                    Intent(this@MainActivity, PageActivity::class.java)
+//                startActivity(travelIntent)
+//                Log.d("NAV", "Tried to nav to other activity")
 //
-//                val this_log = LogViewFrag()
-////                val arglogBundle = Bundle() //init key value pair holder
+////                //start another frag //tt bundling troubles
+////                findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
+////
+////                val myLog: LogViewFrag? =
+////                    supportFragmentManager.findFragmentByTag("myLog") as LogViewFrag?
+////
+////                val this_log = LogViewFrag()
+//////                val arglogBundle = Bundle() //init key value pair holder
+////
+////                uiOutput(log_debug.toString())
+////                //didn't want to wrestle with bundle and data type anymore
+//////                arglogBundle.putSerializable("log_source", ArrayList(log_debug)) //yolo tt,
+////                // casting to arraylist makes it serializable apparently
+////
+//////                this_log.arguments = arglogBundle
 //
-//                uiOutput(log_debug.toString())
-//                //didn't want to wrestle with bundle and data type anymore
-////                arglogBundle.putSerializable("log_source", ArrayList(log_debug)) //yolo tt,
-//                // casting to arraylist makes it serializable apparently
-//
-////                this_log.arguments = arglogBundle
-
-            }
+//            }
 
         findViewById<Button>(R.id.clear_button)
             .setOnClickListener {
-                c_adapter.updateList(mutableListOf<String>()) //overwrite list with emtpy list to display as terminal output
+                c_adapter.updateList(mutableListOf<String>()) //overwrite list with empty list to display as terminal output
             }
 
-        findViewById<Button>(R.id.Stop_button)
+        findViewById<Button>(R.id.stop_button)
             .setOnClickListener {
 
                 //halting through _stop_collection
@@ -185,11 +164,9 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
 
                 //reading
 //                val output = readData("mytestfile.txt")
-//                dataList.add(output)
-//                dataArray = dataList.toTypedArray()
-//                recyclerView.adapter = CustomAdapter(dataArray)
             }
 
+        //runs MobileInsight core, OnlineMonitor
         findViewById<Button>(R.id.python_button).setOnClickListener {
             val pythread = Thread {
                 // Simulate some work in the background
@@ -226,7 +203,7 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
     }
 
     override fun onDataPass(data: Pair<String, String>) { //fragment info pass
-        Log.d("pass","hello " + data)
+        Log.d("pass", data.toString())
         //currently unused since settings info is accessed via persistent memory now
     }
 
@@ -290,7 +267,7 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
                 }
 
             }
-            R.id.item2 -> {
+            R.id.item2 -> { //file browser
                 val files_dir = this.getFilesDir().getPath() //debug
 
                 findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
@@ -314,7 +291,7 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
                     }
                 }
             }
-            R.id.item3 -> { //back button
+            R.id.item3 -> { //home button
                 for (i in 1..supportFragmentManager.getBackStackEntryCount())
                 {supportFragmentManager.popBackStackImmediate()} //wipes fragment backstack
                 onFragDestroyed() //manually call to deal with logfragments and logcontent fragments //TODO test again to check if needed
@@ -323,14 +300,6 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
         // Close the drawer after handling the click
         drawerLayout.closeDrawers()
     }
-
-    private fun replaceFragment(fragment: Fragment){
-        supportFragmentManager.commit {
-            replace(R.id.main_frame, fragment)
-            setReorderingAllowed(true) //not sure why this is needed
-            addToBackStack("1st frag") // Name can be null
-        }
-    } //vestigial
 
 
     private fun copyAssets() { //for copying c and wireshark onto device at install time
@@ -432,7 +401,7 @@ class CustomAdapter(private var lineList: MutableList<String>) : //manage consol
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_layout, parent, false)
+            .inflate(R.layout.consoleitem_layout, parent, false)
         return ItemViewHolder(view)
     }
 

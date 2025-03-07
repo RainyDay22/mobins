@@ -1,4 +1,4 @@
-ret_val= "=====this is an unchanged global variable====="
+ret_val= "=====No errors occurred====="
 ANDROID_SHELL = "/system/bin/sh" ##
 src = None
 

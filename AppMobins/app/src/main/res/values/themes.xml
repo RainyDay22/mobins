@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<!--    <style name="Theme.AppMobins" parent="Theme.Material3.Light" /> &lt;!&ndash; this is like a purple theme that lets u use switches&ndash;&gt;-->
-<!--        parent="Theme.AppCompat" /> like dark theme-->
-<!--        parent="android:Theme.Material.Light" /> material2 theme-->
-
     <style name="Theme.AppMobins" parent="Theme.Material3.Light">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="colorPrimary">@color/dustyPurple</item>
@@ -14,11 +10,11 @@
         <item name="colorOnPrimary">@color/white</item>
             <!--  color of text on button background   -->
 <!--        <item name="preferenceTheme">@style/preference</item>-->
-<!--        ^^ white background for pref-->
+<!--        ^^ special background for pref-->
     </style>
 
 <!--    <style name="preference" parent="Theme.AppCompat">-->
 <!--        <item name="android:background">@color/white</item>-->
 <!--    </style>-->
-<!--    ^^ white background for pref -->
+<!--    ^^ special background for pref -->
 </resources>

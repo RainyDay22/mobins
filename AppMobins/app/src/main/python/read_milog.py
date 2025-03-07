@@ -1,4 +1,4 @@
-ret_val= "=====this is an unchanged global variable====="
+ret_val= "=====No errors occurred====="
 ANDROID_SHELL = "/system/bin/sh" ##
 src = None
 
@@ -21,15 +21,11 @@ def read_milog( toanalyze_path):
     global src
 
     try:
-        print("==== hello world ====", toanalyze_path) #std testing
-
-        log_dir = "/data/data/com.example.appmobins/files"  #hardcoded
-
         loggingAnalyzer = LogAnalyzer(None)
         loggingAnalyzer.AnalyzeFile(toanalyze_path, None)
         log_outputs = loggingAnalyzer.msg_logs #list of dictionaries of length 3, keys "TypeID", "Timestamp", "Payload"
 
-        # print(type(woop), len(woop[0]), woop[:5]) #debugging
+        # print(type(log_outputs), len(log_outputs[0]), log_outputs[:5]) #debugging
         ret_val = log_outputs
 
     except Exception:

@@ -25,11 +25,12 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+//This page describes the FileBrowser page
 class fileInfo(title:String, isFile:Boolean, size:Long, date:String){
     var _title:String =""
     var _isFile:Boolean = false
     var _size:Long = 0
-    var _date:String ="" //unclear how the thing works yet
+    var _date:String =""
 
     init{
         _title = title
@@ -75,7 +76,7 @@ class FileViewFrag : Fragment() {
         act.supportActionBar?.setTitle("File Viewer")
         act.supportActionBar?.setSubtitle(path) //more type finagling
 
-        // Read all files sorted into the values-array
+        // Read all files sorted into the values array
         val values: MutableList<fileInfo> = mutableListOf()
         val dir = File(path)
         if (!dir.canRead()) {
@@ -106,6 +107,7 @@ class FileViewFrag : Fragment() {
                         //directory check
                         if (File(filename).isDirectory){
                             values.add(fileInfo(file, false, 0,""))
+                            //currently we don't save size or date information avout directories
                         }
                     }
                 }
@@ -124,14 +126,8 @@ class FileViewFrag : Fragment() {
                 mContext = context
             }
 
-            @SuppressLint("ViewHolder") //not sure why but it works
+            @SuppressLint("ViewHolder") //there might be a better way of writing this
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-//                var cv = convertView
-//
-//                if (cv==null){
-//                    val vi = LayoutInflater.from(mContext)
-//                    cv = vi.inflate(resourceLayout, null)
-//                } //not sure why but it works
 
                 val vi = LayoutInflater.from(mContext)
                 val cv = vi.inflate(resourceLayout, null)
@@ -139,11 +135,13 @@ class FileViewFrag : Fragment() {
                 val file_info = getItem(position)
 
                 if(file_info!=null){
+                    //fetch xml elements
                     val icon: ImageView = cv.findViewById(R.id.file_icon)
                     val name:TextView = cv.findViewById(R.id.file_title)
                     val size:TextView = cv.findViewById(R.id.file_size)
                     val date:TextView = cv.findViewById(R.id.file_date)
 
+                    //populate xml elements
                     if(file_info._isFile) {
                         icon.setImageIcon(createWithResource(mContext,R.drawable.baseline_file_24))
                         size.setText((file_info._size).toString())
@@ -161,7 +159,7 @@ class FileViewFrag : Fragment() {
         listView.adapter = adapter
 
 
-        //navigate into directories
+        //navigate into if directories, launch log analysis if files
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
 
             val file = (listView.adapter).getItem(position) as fileInfo
@@ -181,7 +179,7 @@ class FileViewFrag : Fragment() {
             }
 
             if (File(filename).isDirectory) {
-                // make new etx, make bundle, call fragment manager
+                // make new fragment, make bundle, call fragment manager
                 val thisBrowse = FileViewFrag()
                 val argBundle = Bundle()
                 argBundle.putString("path", filename)
@@ -198,26 +196,25 @@ class FileViewFrag : Fragment() {
                 }
 
                 } else {
-//                Toast.makeText(act.getApplicationContext(), "$filename is not a directory", Toast.LENGTH_LONG).show()
 
-                var log_list: MutableList<PyObject>? = null
+                var logList: MutableList<PyObject>? = null //hold run outputs
                 val pythread = Thread {
                     Log.d("fvfrag", "Thread is running...")
                     try {
                         val pystr = file_pymodule.callAttr("read_milog", filename) //function call w arg
                         Log.d("fvfrag", pystr.toString())
 
-                        log_list = pystr.asList() //cast
+                        logList = pystr.asList() //cast
 
                         act.runOnUiThread{
                             Toast.makeText(act.getApplicationContext(), "thread is done", Toast.LENGTH_SHORT).show()
-                            act.log_debug = log_list //tt log debug
+                            act.log_store = logList //storing so that logview fragment can access it
 
                             //launch logview frag
                             val thisLog = LogViewFrag()
 
                             //fragment transaction
-                            val supportFragmentManager = act.supportFragmentManager//act.getSupportFragmentManager()
+                            val supportFragmentManager = act.supportFragmentManager
                             supportFragmentManager.commit {
                                 replace(R.id.fragment_holder, thisLog, "l_log")
                                 setReorderingAllowed(true)
@@ -238,7 +235,7 @@ class FileViewFrag : Fragment() {
         return v
     }
 
-    interface OnDataPass { //vestigial start
+    interface OnDataPass {
         fun onDataPass(data: Pair<String, String>)
         fun onFragDestroyed()
     }
@@ -255,8 +252,8 @@ class FileViewFrag : Fragment() {
         dataPasser = context as OnDataPass
     }
 
-    fun passData(data: Pair<String,String>){
+    fun passData(data: Pair<String,String>){ //currently unused
         dataPasser.onDataPass(data)
-    } //vestigial end
+    }
 
 }
