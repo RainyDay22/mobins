@@ -1,9 +1,8 @@
 package com.example.appmobins
 
 //from chaquoconsole
-import android.app.Application
+import GraphFrag
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -34,7 +33,8 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDataPass {
+class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass,
+    FileViewFrag.OnDataPass, GraphFrag.OnDataPass {
 
     var dataList = mutableListOf<String>("")
 
@@ -119,32 +119,44 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass, FileViewFrag.OnDa
 //                )
 //            }
 
-//        findViewById<Button>(R.id.travel_button) //debug
-//            .setOnClickListener {
-//
+        findViewById<Button>(R.id.sandbox_button) //debug
+            .setOnClickListener {
+
 //                //start another activity
 //                val travelIntent =
 //                    Intent(this@MainActivity, PageActivity::class.java)
 //                startActivity(travelIntent)
-//                Log.d("NAV", "Tried to nav to other activity")
-//
-////                //start another frag //tt bundling troubles
-////                findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
-////
-////                val myLog: LogViewFrag? =
-////                    supportFragmentManager.findFragmentByTag("myLog") as LogViewFrag?
-////
-////                val this_log = LogViewFrag()
-//////                val arglogBundle = Bundle() //init key value pair holder
-////
-////                uiOutput(log_debug.toString())
-////                //didn't want to wrestle with bundle and data type anymore
-//////                arglogBundle.putSerializable("log_source", ArrayList(log_debug)) //yolo tt,
-////                // casting to arraylist makes it serializable apparently
-////
-//////                this_log.arguments = arglogBundle
-//
-//            }
+                findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
+
+                val myGraph: GraphFrag? =
+                    supportFragmentManager.findFragmentByTag("Graph") as GraphFrag?
+
+//                val bstack_ind = supportFragmentManager.getBackStackEntryCount()-1 //fragment backstack debugging
+//                if(bstack_ind>=0){
+//                    val bstack_entry = supportFragmentManager.getBackStackEntryAt(bstack_ind)
+//                    val huh:Fragment? = supportFragmentManager.findFragmentByTag(bstack_entry.getName())
+//                    Log.d("froggie",
+//                        bstack_entry.getName()
+//                                +"**"
+//                                +huh.toString()
+//                                + "**"
+//                                + huh?.isVisible.toString())
+//                }
+
+                if (myGraph==null || !myGraph.isVisible){ //avoid duplicates in frag backstack
+                    supportFragmentManager.commit {
+
+                        replace(R.id.fragment_holder, GraphFrag(), "Graph") //tag of actual Fragment
+                        setReorderingAllowed(true) //not sure why this is needed
+
+                        addToBackStack("Graph") // name of backStackEntry, one entry per commit
+
+                    }
+                }
+
+                Log.d("NAV", "went to new frag")
+
+            }
 
         findViewById<Button>(R.id.clear_button)
             .setOnClickListener {
