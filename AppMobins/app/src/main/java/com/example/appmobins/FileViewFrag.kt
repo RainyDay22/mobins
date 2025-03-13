@@ -1,10 +1,10 @@
 package com.example.appmobins
 
+import FileActionsFrag
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Icon.createWithResource
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,10 +16,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import com.chaquo.python.PyException
-import com.chaquo.python.PyObject
-import com.chaquo.python.Python
-import com.chaquo.python.android.AndroidPlatform
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -48,18 +44,11 @@ fun convertLongToTime(time: Long): String { //standard Kotlin formatting
 
 class FileViewFrag : Fragment() {
     private var path: String = "/data/data/com.example.appmobins/" //hardcoded
-    private lateinit var file_pymodule: PyObject
     private lateinit var act:MainActivity
 
     override fun onCreate(savedInstanceState: Bundle?) { //python set up
         super.onCreate(savedInstanceState)
         act = activity as MainActivity //cast from FragmentActivity to MainActivity (aka my own class)
-
-        //start python
-        if (!Python.isStarted()) {
-            Python.start(AndroidPlatform(act))
-        }
-        file_pymodule = act.pyInstance.getModule("read_milog")
     }
 
     override fun onCreateView(
@@ -113,7 +102,7 @@ class FileViewFrag : Fragment() {
                 }
             }
         }
-//        values.sort() //optional
+        val sorted_values=values.sortedWith(compareBy<fileInfo>{it._title}.thenBy{it._date}) //optional
 
         // Put the data into the list
         class ListAdapter(context: Context, resource: Int, textViewResourceId:Int,  items: List<fileInfo>) :
@@ -155,7 +144,9 @@ class FileViewFrag : Fragment() {
             }
         }
 
-        val adapter = ListAdapter(act.getApplicationContext()!!, R.layout.fileitem_layout, R.layout.fileitem_layout, values)
+        val adapter = ListAdapter(act.getApplicationContext()!!,
+            R.layout.fileitem_layout,
+            R.layout.fileitem_layout, sorted_values) //pass 'values' directly if chose no sorting
         listView.adapter = adapter
 
 
@@ -195,40 +186,23 @@ class FileViewFrag : Fragment() {
                     addToBackStack("r_browse")
                 }
 
-                } else {
-
-                var logList: MutableList<PyObject>? = null //hold run outputs
-                val pythread = Thread {
-                    Log.d("fvfrag", "Thread is running...")
-                    try {
-                        val pystr = file_pymodule.callAttr("read_milog", filename) //function call w arg
-                        Log.d("fvfrag", pystr.toString())
-
-                        logList = pystr.asList() //cast
-
-                        act.runOnUiThread{
-                            Toast.makeText(act.getApplicationContext(), "thread is done", Toast.LENGTH_SHORT).show()
-                            act.log_store = logList //storing so that logview fragment can access it
-
-                            //launch logview frag
-                            val thisLog = LogViewFrag()
-
-                            //fragment transaction
-                            val supportFragmentManager = act.supportFragmentManager
-                            supportFragmentManager.commit {
-                                replace(R.id.fragment_holder, thisLog, "l_log")
-                                setReorderingAllowed(true)
-
-                                addToBackStack("l_log")
-                            }
-
-                        }
-                    } catch (e: PyException) {
-                        Log.d("fvfrag","Error: ${e.message}")
-                    }
                 }
-                pythread.start()
+            else {
+                //fragment transaction
+                val thisActions = FileActionsFrag()
 
+                //pack info into bundle
+                val argBundle = Bundle() //init key value pair holder
+                argBundle.putString("file", filename)
+                argBundle.putString("file_title", file._title)
+                thisActions.arguments = argBundle
+
+                val supportFragmentManager = act.supportFragmentManager
+                supportFragmentManager.commit {
+                    replace(R.id.fragment_holder, thisActions, "f_actions")
+                    setReorderingAllowed(true)
+                    addToBackStack("f_actions")
+                }
             }
         }
 

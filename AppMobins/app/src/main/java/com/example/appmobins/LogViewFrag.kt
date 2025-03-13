@@ -29,7 +29,7 @@ import com.chaquo.python.PyObject
 //}
 
 class LogViewFrag : Fragment() {
-    private var path: String = "/data/data/com.example.appmobins/" //subtitle?
+    private var title: String = ""
     private lateinit var act:MainActivity
     private var log_source: List<PyObject>? =null //will hold all the msg_logs returned by LogAnalyzer
 
@@ -49,10 +49,10 @@ class LogViewFrag : Fragment() {
         val listView = v.findViewById<ListView>(R.id.log_list)
 
         // Use the current log file as subtitle?? tt
-//        path = getArguments()?.getString("path").toString()
+        title = getArguments()?.getString("title").toString()
 
         act.supportActionBar?.setTitle("Log Browser")
-//        act.supportActionBar?.setSubtitle(path)
+        act.supportActionBar?.setSubtitle(title)
 
         // Put the data into the list
         class ListAdapter(context: Context, resource: Int, textViewResourceId:Int,  items: List<PyObject>) :

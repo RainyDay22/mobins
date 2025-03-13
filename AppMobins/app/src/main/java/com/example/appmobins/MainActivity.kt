@@ -74,8 +74,6 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass,
         //copy assets over, only run on installation aka not normalRun aka first run
         //assets are c and wireshark packages
         val settings:SharedPreferences= getSharedPreferences("PREFS_NAME", 0)
-        copyAssets()
-
 
         installMode = settings.getBoolean("FIRST_RUN", true)
         if (installMode) {
@@ -123,47 +121,35 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass,
 //                )
 //            }
 
-        findViewById<Button>(R.id.sandbox_button) //debug
-            .setOnClickListener {
+//        findViewById<Button>(R.id.sandbox_button) //debug
+//            .setOnClickListener {
 
 //                //start another activity
 //                val travelIntent =
 //                    Intent(this@MainActivity, PageActivity::class.java)
 //                startActivity(travelIntent)
 
-                val bucketSize=10
-
-                //run python
-                val graph_module = pyInstance.getModule("getlog_graphdata")
-                val ref_log_file = "bler_sample.mi2log"// "data_sample.mi2log"
-                val log_res = graph_module.callAttr("getlog_graphdata", "/data/data/com.example.appmobins/files/"+ref_log_file,bucketSize)
-                graph_info = log_res.toString()
-                Log.d("graff", graph_info)
-
+                //frag
                 //pack info into bundle
-                val argBundle = Bundle() //init key value pair holder
-                argBundle.putString("graph_file", ref_log_file)
-                argBundle.putString("graph_info", graph_info)
-                argBundle.putInt("bucket_size", bucketSize)
+//                val argBundle = Bundle() //init key value pair holder
+//                argBundle.putString("delay_type", "MAC")
+//
+//                findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
+//
+//                //make new, set args
+//                val thisGraph = GraphFrag()
+//                thisGraph.arguments = argBundle
+//
+//                //transactions
+//                supportFragmentManager.commit {
+//
+//                    replace(R.id.fragment_holder, thisGraph, "g_graph") //tag of actual Fragment
+//                    setReorderingAllowed(true) //not sure why this is needed
+//
+//                    addToBackStack("g_graph") // name of backStackEntry, one entry per commit
+//                }
 
-                findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
-
-                //make new, set args
-                val thisGraph = GraphFrag()
-                thisGraph.arguments = argBundle
-
-                //transactions
-                supportFragmentManager.commit {
-
-                    replace(R.id.fragment_holder, thisGraph, "Graph") //tag of actual Fragment
-                    setReorderingAllowed(true) //not sure why this is needed
-
-                    addToBackStack("Graph") // name of backStackEntry, one entry per commit
-
-                }
-
-
-            }
+//            }
 
         findViewById<Button>(R.id.clear_button)
             .setOnClickListener {

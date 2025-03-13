@@ -18,41 +18,16 @@
             android:layout_height="48dp"
             android:text="Average time 1"
             android:textSize = "18sp"
-            android:background = "#c0cb89"
             android:gravity = "center"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
-
-        <TextView
-            android:id="@+id/text2"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="some stats 2"
-            android:textSize = "18sp"
-            android:background = "#c0cb89"
-            android:gravity = "center"
-            app:layout_constraintTop_toBottomOf="@id/text1"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-<!--        <TextView-->
-<!--            android:id="@+id/chart"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constrainedHeight="true"-->
-<!--            android:text=""-->
-<!--            android:textSize = "18sp"-->
-<!--            android:scrollbars = "vertical"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/text2"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            />-->
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/chart"
             android:layout_width="match_parent"
             android:layout_height="500dp"
             app:layout_constrainedHeight="true"
-            app:layout_constraintTop_toBottomOf="@id/text2"
+            app:layout_constraintTop_toBottomOf="@id/text1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
         />

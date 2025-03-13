@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="blue">#0081FB</color>
+    <color name="sage">#c0cb89</color>
+<!--    ^ mac graph-->
+    <color name="pale_blue">#bbe3f1</color>
+<!--    ^ log contents-->
+    <color name="teal">#7fcbc7</color>
+<!--    ^ log view number -->
     <color name="yellow">#FFFF00</color>
     <color name="white">#f7f9ff</color>
     <color name="dustyPurple">#838fbb</color>
-    <color name="orange">#FF9F1C</color>
+    <color name="orange">#fbc37a</color>
+<!--    ^ rlc graph-->
     <color name="gray">#747578</color>
     <color name="black">#000000</color>
     <color name="red">#FF0000</color>

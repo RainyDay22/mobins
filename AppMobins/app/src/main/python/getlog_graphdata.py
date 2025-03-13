@@ -28,7 +28,6 @@ def getlog_graphdata(tograph_path, bucketSize=1):
         lteAnalyzer.set_source(src)
 
         src.run()
-        collected = lteAnalyzer.bearer_entity
 
         mac_delay = []
         mac_acc = 0.0
@@ -38,7 +37,7 @@ def getlog_graphdata(tograph_path, bucketSize=1):
         rlc_acc = 0.0
         rlc_delay_sample = 0
 
-        offset = bucketSize//2
+        offset = bucketSize//2 #for wider columns in chart
 
         for _, bearer in lteAnalyzer.bearer_entity.items():
             for item in bearer.mac_retx:
@@ -62,7 +61,6 @@ def getlog_graphdata(tograph_path, bucketSize=1):
         rlc_elem = [str(e) for e in frequency.keys()] if rlc_delay_sample > 0 else ["0.0"]
         rlc_freq = [str(f) for f in frequency.values()] if rlc_delay_sample > 0 else ["0"]
 
-        print( rlc_elem, rlc_freq)
 
         avg_mac_delay = round(float(mac_acc) / mac_delay_sample, 2) if mac_delay_sample > 0 else 0.0
         avg_rlc_delay = round(float(rlc_acc) / rlc_delay_sample, 2) if rlc_delay_sample > 0 else 0.0
@@ -70,9 +68,9 @@ def getlog_graphdata(tograph_path, bucketSize=1):
         # print("Average MAC retx delay is: ", avg_mac_delay)
         # print("Average RLC retx delay is:", avg_rlc_delay)
 
-        ret_val = ([",".join(mac_elem) ,",".join(mac_freq), str(avg_mac_delay),
-                   ",".join(rlc_elem) ,",".join(rlc_freq),str(avg_rlc_delay)])
-        ret_val = "/".join(ret_val)
+        ret_val = ([",".join(mac_elem) ,",".join(mac_freq), str(avg_mac_delay)],
+                   [",".join(rlc_elem) ,",".join(rlc_freq),str(avg_rlc_delay)])
+        ret_val = "=".join(["/".join(r) for r in ret_val]) #hard coded separators are not best practice
 
     except Exception:
         ret_val= traceback.format_exc()
