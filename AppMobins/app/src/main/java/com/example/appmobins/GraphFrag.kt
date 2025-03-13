@@ -18,8 +18,30 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 
 class GraphFrag : Fragment() {
     private lateinit var act: MainActivity
-    private var graph_source ="some_file_name" //will hold all the msg_logs returned by LogAnalyzer
+    private var graph_source:String? ="some_file_name" //will hold all the msg_logs returned by LogAnalyzer
     private lateinit var chart: BarChart
+
+    private var x_mac=listOf(0f)
+    private var y_mac= listOf(0f)
+    private var mac_avg = "0.0"
+
+    private var x_rlc=listOf(0f)
+    private var y_rlc= listOf(0f)
+    private var rlc_avg = "0.0"
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        dataPasser = context as OnDataPass
+
+        act = activity as MainActivity
+        act.supportActionBar?.setTitle("Analysis Graph")
+
+        graph_source = getArguments()?.getString("graph_file")
+        val graph_str = getArguments()?.getString("graph_info")
+        parseStringToText(graph_str)
+
+        act.supportActionBar?.setSubtitle(graph_source)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,13 +51,16 @@ class GraphFrag : Fragment() {
         //set the strings to the xml holders
         val text1: TextView = v.findViewById(R.id.text1)
         val text2: TextView = v.findViewById(R.id.text2)
+        text1.setText("Average MAC retx delay is: "+ mac_avg)
+        text2.setText("Average RLC retx delay is: "+rlc_avg)
+
         chart = v.findViewById(R.id.chart)
 
         //chart.setOnChartValueSelectedListener(this)
         chart.setDrawBarShadow(false)
         chart.setDrawValueAboveBar(true)
         chart.description.isEnabled = false
-        chart.setMaxVisibleValueCount(60)
+//        chart.setMaxVisibleValueCount(200)
         //chart.setPinchZoom(false)
 
         chart.setDrawGridBackground(true)
@@ -48,32 +73,50 @@ class GraphFrag : Fragment() {
         xAxis.axisMinimum = 0f
 
         val leftAxis = chart.axisLeft
-//        leftAxis.granularity = 0.5f //f is to cast to/declare it as float
-        leftAxis.labelCount = 10
+        leftAxis.granularity = 1f //f is to cast to/declare it as float
+//        leftAxis.labelCount = 10
 //        leftAxis.spaceTop = 15f
         leftAxis.axisMinimum = 0f // this replaces setStartAtZero(true)
 
         val rightAxis = chart.axisRight
-        rightAxis.granularity = 1f //f is to cast to/declare it as float
-//        rightAxis.labelCount = 10
+//        rightAxis.granularity = 1f //f is to cast to/declare it as float
+        rightAxis.labelCount = 1
         rightAxis.axisMinimum = 0f // this replaces setStartAtZero(true)
 
 
         setData()
-        text1.setText(graph_source)
 
         return v
     }
 
+    fun parseStringToText (data_str:String?){
+        if(data_str==null){return} //do nothing if null
+        // format is mac,x,values/mac,y,values/mac_avg/rlc,x,values/rlc,y,values/rlc_avg
+
+
+        val l1_list = data_str.split('/')
+        x_mac = (l1_list[0].split(',')).map {it.toFloat()}
+        y_mac = (l1_list[1].split(',')).map {it.toFloat()}
+        mac_avg = l1_list[2]
+
+        x_rlc = (l1_list[0].split(',')).map {it.toFloat()}
+        y_rlc = (l1_list[1].split(',')).map {it.toFloat()}
+        rlc_avg = l1_list[5]
+    }
+
     fun setData() {
         val barValues:ArrayList<BarEntry> = ArrayList()
-        val hardValues = listOf(1f,2f,3f,4f,5f)
+//        val hardValues = listOf(1f,2f,3f,4f,5f)
+//
+//        for (h in hardValues){
+//            barValues.add(BarEntry(h,h))
+//        }
 
-        for (h in hardValues){
-            barValues.add(BarEntry(h,h))
+        for (i in x_mac.indices){
+            barValues.add(BarEntry(x_mac[i],y_mac[i]))
         }
 
-        val set = BarDataSet(barValues,"dummy set")
+        val set = BarDataSet(barValues,"example set")
         set.setDrawIcons(false)
 
         set.setColors(R.color.dustyPurple)
@@ -82,7 +125,7 @@ class GraphFrag : Fragment() {
         dataSets.add(set)
         val data = BarData(dataSets)
         data.setValueTextSize(10f)
-        data.setBarWidth(0.4f)
+        data.setBarWidth(0.5f)
         chart.setData(data)
 
 
@@ -121,12 +164,4 @@ class GraphFrag : Fragment() {
         super.onDestroyView()
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        dataPasser = context as OnDataPass
-
-        act = activity as MainActivity
-        act.supportActionBar?.setTitle("Analysis Graph")
-        act.supportActionBar?.setSubtitle(graph_source)
-    }
 }

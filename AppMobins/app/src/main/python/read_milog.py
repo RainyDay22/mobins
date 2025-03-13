@@ -14,7 +14,7 @@ try:
     from datetime import datetime
 
 except ImportError as e:
-    ret_val = repr(e) #seems to not run quite right as a work around to print
+    ret_val = repr(e)
 
 def read_milog( toanalyze_path):
     global ret_val

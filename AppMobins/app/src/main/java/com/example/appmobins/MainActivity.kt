@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass,
     var installMode : Boolean = true //flag is true if the app is run for the first time, flag for install mode
 
     var log_store:List<PyObject>?=null//used to let fileviewer pass object to log analyzer
+    var graph_info=""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,9 +74,12 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass,
         //copy assets over, only run on installation aka not normalRun aka first run
         //assets are c and wireshark packages
         val settings:SharedPreferences= getSharedPreferences("PREFS_NAME", 0)
+        copyAssets()
+
+
         installMode = settings.getBoolean("FIRST_RUN", true)
         if (installMode) {
-            copyAssets()
+            copyAssets() //into files internal data folder
             Log.d("ASSETS", "copyAssets finished running")
 
             val spEditor:SharedPreferences.Editor = settings.edit()
@@ -126,35 +130,40 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass,
 //                val travelIntent =
 //                    Intent(this@MainActivity, PageActivity::class.java)
 //                startActivity(travelIntent)
+
+                //run python
+                val graph_module = pyInstance.getModule("getlog_graphdata")
+                val ref_log_file = "bler_sample.mi2log"
+                val log_res = graph_module.callAttr("getlog_graphdata", "/data/data/com.example.appmobins/files/"+ref_log_file)
+                graph_info = log_res.toString()
+                Log.d("graff", graph_info)
+
+                //pack info into bundle
+                val argBundle = Bundle() //init key value pair holder
+                argBundle.putString("graph_file", ref_log_file)
+                argBundle.putString("graph_info", graph_info)
+
                 findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
 
+                //check if already exists
                 val myGraph: GraphFrag? =
                     supportFragmentManager.findFragmentByTag("Graph") as GraphFrag?
 
-//                val bstack_ind = supportFragmentManager.getBackStackEntryCount()-1 //fragment backstack debugging
-//                if(bstack_ind>=0){
-//                    val bstack_entry = supportFragmentManager.getBackStackEntryAt(bstack_ind)
-//                    val huh:Fragment? = supportFragmentManager.findFragmentByTag(bstack_entry.getName())
-//                    Log.d("froggie",
-//                        bstack_entry.getName()
-//                                +"**"
-//                                +huh.toString()
-//                                + "**"
-//                                + huh?.isVisible.toString())
-//                }
+                //make new, set args
+                val thisGraph = GraphFrag()
+                thisGraph.arguments = argBundle
 
+                //transactions
                 if (myGraph==null || !myGraph.isVisible){ //avoid duplicates in frag backstack
                     supportFragmentManager.commit {
 
-                        replace(R.id.fragment_holder, GraphFrag(), "Graph") //tag of actual Fragment
+                        replace(R.id.fragment_holder, thisGraph, "Graph") //tag of actual Fragment
                         setReorderingAllowed(true) //not sure why this is needed
 
                         addToBackStack("Graph") // name of backStackEntry, one entry per commit
 
                     }
                 }
-
-                Log.d("NAV", "went to new frag")
 
             }
 
