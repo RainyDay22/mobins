@@ -8,16 +8,15 @@ try:
     """
     # import os
     import sys
-    # import shutil
+    import math
     import traceback
     from mobile_insight.monitor import OfflineReplayer
     from mobile_insight.analyzer import LteDlRetxAnalyzer
-    # from datetime import datetime
 
 except ImportError as e:
     ret_val = repr(e)
 
-def getlog_graphdata(tograph_path):
+def getlog_graphdata(tograph_path, bucketSize=1):
     global ret_val
     global src
 
@@ -39,26 +38,29 @@ def getlog_graphdata(tograph_path):
         rlc_acc = 0.0
         rlc_delay_sample = 0
 
+        offset = bucketSize//2
+
         for _, bearer in lteAnalyzer.bearer_entity.items():
             for item in bearer.mac_retx:
-                mac_delay.append(item['mac_retx'])
+                bucket = (item['mac_retx']//bucketSize)*bucketSize+offset
+                mac_delay.append(bucket)
                 mac_acc += item['mac_retx']
             mac_delay_sample += len(bearer.mac_retx)
 
             for item in bearer.rlc_retx:
-                rlc_delay.append(item['rlc_retx'])
+                bucket = (item['rlc_retx']//bucketSize)*bucketSize+offset
+                rlc_delay.append(bucket)
                 rlc_acc += item['rlc_retx']
             rlc_delay_sample += len(bearer.rlc_retx)
         #
-        mac_delay.sort()
-        frequency = {x:mac_delay.count(x) for x in mac_delay} #sort for convenience
-        mac_elem = [str(e) for e in frequency.keys()]
-        mac_freq = [str(f) for f in frequency.values()]
 
-        rlc_delay.sort()
-        frequency = {x:rlc_delay.count(x) for x in rlc_delay} #sort for convenience
-        rlc_elem = [str(e) for e in frequency.keys()]
-        rlc_freq = [str(f) for f in frequency.values()]
+        frequency = {x:mac_delay.count(x) for x in mac_delay}
+        mac_elem = [str(e) for e in frequency.keys()] if mac_delay_sample > 0 else ["0.0"]
+        mac_freq = [str(f) for f in frequency.values()] if mac_delay_sample > 0 else ["0"]
+
+        frequency = {x:rlc_delay.count(x) for x in rlc_delay}
+        rlc_elem = [str(e) for e in frequency.keys()] if rlc_delay_sample > 0 else ["0.0"]
+        rlc_freq = [str(f) for f in frequency.values()] if rlc_delay_sample > 0 else ["0"]
 
         print( rlc_elem, rlc_freq)
 

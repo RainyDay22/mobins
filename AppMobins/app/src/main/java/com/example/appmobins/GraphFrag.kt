@@ -19,7 +19,9 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 class GraphFrag : Fragment() {
     private lateinit var act: MainActivity
     private var graph_source:String? ="some_file_name" //will hold all the msg_logs returned by LogAnalyzer
+
     private lateinit var chart: BarChart
+    private var bucketSize:Int = 1
 
     private var x_mac=listOf(0f)
     private var y_mac= listOf(0f)
@@ -39,6 +41,7 @@ class GraphFrag : Fragment() {
         graph_source = getArguments()?.getString("graph_file")
         val graph_str = getArguments()?.getString("graph_info")
         parseStringToText(graph_str)
+        bucketSize = requireArguments().getInt("bucket_size")
 
         act.supportActionBar?.setSubtitle(graph_source)
     }
@@ -59,6 +62,9 @@ class GraphFrag : Fragment() {
         //chart.setOnChartValueSelectedListener(this)
         chart.setDrawBarShadow(false)
         chart.setDrawValueAboveBar(true)
+        chart.setFitBars(true)
+
+
         chart.description.isEnabled = false
 //        chart.setMaxVisibleValueCount(200)
         //chart.setPinchZoom(false)
@@ -70,17 +76,18 @@ class GraphFrag : Fragment() {
         xAxis.setDrawGridLines(false)
         xAxis.granularity = 1f //f is to cast to/declare it as float
         xAxis.labelCount = 60
-        xAxis.axisMinimum = 0f
+
+        xAxis.setDrawGridLines(true)
 
         val leftAxis = chart.axisLeft
         leftAxis.granularity = 1f //f is to cast to/declare it as float
 //        leftAxis.labelCount = 10
-//        leftAxis.spaceTop = 15f
         leftAxis.axisMinimum = 0f // this replaces setStartAtZero(true)
 
         val rightAxis = chart.axisRight
 //        rightAxis.granularity = 1f //f is to cast to/declare it as float
         rightAxis.labelCount = 1
+        rightAxis.setDrawGridLines(false)
         rightAxis.axisMinimum = 0f // this replaces setStartAtZero(true)
 
 
@@ -99,8 +106,8 @@ class GraphFrag : Fragment() {
         y_mac = (l1_list[1].split(',')).map {it.toFloat()}
         mac_avg = l1_list[2]
 
-        x_rlc = (l1_list[0].split(',')).map {it.toFloat()}
-        y_rlc = (l1_list[1].split(',')).map {it.toFloat()}
+        x_rlc = (l1_list[3].split(',')).map {it.toFloat()}
+        y_rlc = (l1_list[4].split(',')).map {it.toFloat()}
         rlc_avg = l1_list[5]
     }
 
@@ -125,7 +132,7 @@ class GraphFrag : Fragment() {
         dataSets.add(set)
         val data = BarData(dataSets)
         data.setValueTextSize(10f)
-        data.setBarWidth(0.5f)
+        data.setBarWidth((bucketSize*0.8).toFloat())
         chart.setData(data)
 
 

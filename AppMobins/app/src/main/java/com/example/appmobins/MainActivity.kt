@@ -131,10 +131,12 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass,
 //                    Intent(this@MainActivity, PageActivity::class.java)
 //                startActivity(travelIntent)
 
+                val bucketSize=10
+
                 //run python
                 val graph_module = pyInstance.getModule("getlog_graphdata")
-                val ref_log_file = "bler_sample.mi2log"
-                val log_res = graph_module.callAttr("getlog_graphdata", "/data/data/com.example.appmobins/files/"+ref_log_file)
+                val ref_log_file = "bler_sample.mi2log"// "data_sample.mi2log"
+                val log_res = graph_module.callAttr("getlog_graphdata", "/data/data/com.example.appmobins/files/"+ref_log_file,bucketSize)
                 graph_info = log_res.toString()
                 Log.d("graff", graph_info)
 
@@ -142,28 +144,24 @@ class MainActivity : AppCompatActivity(), PrefFrag.OnDataPass,
                 val argBundle = Bundle() //init key value pair holder
                 argBundle.putString("graph_file", ref_log_file)
                 argBundle.putString("graph_info", graph_info)
+                argBundle.putInt("bucket_size", bucketSize)
 
                 findViewById<FrameLayout>(R.id.main_frame).setVisibility(View.GONE)
-
-                //check if already exists
-                val myGraph: GraphFrag? =
-                    supportFragmentManager.findFragmentByTag("Graph") as GraphFrag?
 
                 //make new, set args
                 val thisGraph = GraphFrag()
                 thisGraph.arguments = argBundle
 
                 //transactions
-                if (myGraph==null || !myGraph.isVisible){ //avoid duplicates in frag backstack
-                    supportFragmentManager.commit {
+                supportFragmentManager.commit {
 
-                        replace(R.id.fragment_holder, thisGraph, "Graph") //tag of actual Fragment
-                        setReorderingAllowed(true) //not sure why this is needed
+                    replace(R.id.fragment_holder, thisGraph, "Graph") //tag of actual Fragment
+                    setReorderingAllowed(true) //not sure why this is needed
 
-                        addToBackStack("Graph") // name of backStackEntry, one entry per commit
+                    addToBackStack("Graph") // name of backStackEntry, one entry per commit
 
-                    }
                 }
+
 
             }
 
