@@ -43,10 +43,11 @@ class FileActionsFrag : Fragment() {
         val graph_rlc: TextView = v.findViewById(R.id.graph_rlc)
 
         act.supportActionBar?.setTitle("Choose File Action")
-        act.supportActionBar?.setSubtitle("")
 
         file = getArguments()?.getString("file")
         file_title = getArguments()?.getString("file_title")
+
+        act.supportActionBar?.setSubtitle(file_title)
 
         launch_analyzer.setOnClickListener{
             //launch analyzer
